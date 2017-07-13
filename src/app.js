@@ -10,6 +10,7 @@ const credentials = {
   }
 }
 const telegramToken = '441601404:AAEBmrTkSSJFhOt-Cihadlo2h8g6sKVtIs4'
+const url = 'https://assembla-bot-server.herokuapp.com';
 
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -28,6 +29,8 @@ const authorization_uri = oauth2.authorizationCode.authorizeURL({
 
 const bot = new telegram(telegramToken, {polling: true});
 
+bot.setWebHook(`${url}/bot${telegramToken}`)
+
 bot.onText(/\/(.+)/, (msg, match) => {
   const chatId = msg.chat.id;
   switch (match[1]){
@@ -45,17 +48,18 @@ bot.onText(/\/(.+)/, (msg, match) => {
 });
 
 //user hits this route, but doesn't have a auth code, so we redirect
-app.get('/', (req, res) =>
-  res.redirect('/auth')
-);
+// app.get('/', (req, res) =>
+//   res.redirect('/auth')
+// );
 //
-app.get('/auth', (req, res) =>
-  res.redirect(authorization_uri)
-);
+// app.get('/auth', (req, res) =>
+//   res.redirect(authorization_uri)
+// );
 
 //callback url route specifed when you made your app
 app.get('/callback', (req, res) => {
 
+  console.log("Callback Response(Assembla):", res)
   //we've got an auth code,
   //so now we can get a bearer token
   oauth2.authorizationCode.getToken({
@@ -70,7 +74,6 @@ app.get('/callback', (req, res) => {
     const token = oauth2.accessToken.create(result);
     console.log("Token: ", token)
     res.redirect('https://t.me/AssemblaBot');
-    pullSpaces( res, token );
   });
 
 });
