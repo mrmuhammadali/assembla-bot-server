@@ -69,7 +69,7 @@ app.get('/callback', (req, res) => {
 
   function saveToken(error, result) {
     if (error) {
-      console.log('Access Token Error', error);
+      console.log('Access Token Error: ', error);
       res.redirect('/');
       return;
     }
