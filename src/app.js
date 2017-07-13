@@ -33,6 +33,7 @@ bot.onText(/\/(.+)/, (msg, match) => {
   switch (match[1]){
 
     case 'connect': {
+      console.log("connect: ", chatId)
       bot.sendMessage(chatId, `Open this link to authorize the bot:\n${authorization_uri}`);
       return;
     }
@@ -51,9 +52,9 @@ app.get('/', (req, res) =>
   res.redirect('/auth')
 );
 //
-// app.get('/auth', (req, res) =>
-//   res.redirect(authorization_uri)
-// );
+app.get('/auth', (req, res) =>
+  res.redirect(authorization_uri)
+);
 
 //callback url route specifed when you made your app
 app.get('/callback', (req, res) => {
@@ -74,7 +75,7 @@ app.get('/callback', (req, res) => {
       return;
     }
     const token = oauth2.accessToken.create(result);
-    console.log("Toke: ", token)
+    console.log("Token: ", token)
     pullSpaces( res, token );
   }
 });
