@@ -42,9 +42,6 @@ bot.onText(/\/(.+)/, (msg, match) => {
       bot.sendMessage(chatId, 'Command not found!');
       return;
   }
-
-
-
 });
 
 //user hits this route, but doesn't have a auth code, so we redirect
@@ -58,25 +55,24 @@ app.get('/auth', (req, res) =>
 
 //callback url route specifed when you made your app
 app.get('/callback', (req, res) => {
-  const code = req.query.code;
 
   //we've got an auth code,
   //so now we can get a bearer token
   oauth2.authorizationCode.getToken({
-    code: code,
+    code: req.query.code,
     grant_type: 'authorization_code'
-  }, saveToken);
-
-  function saveToken(error, result) {
+  }, (error, result) => {
     if (error) {
       console.log('Access Token Error: ', error);
-      res.redirect('/');
+      res.redirect('https://t.me/AssemblaBot');
       return;
     }
     const token = oauth2.accessToken.create(result);
     console.log("Token: ", token)
+    res.redirect('https://t.me/AssemblaBot');
     pullSpaces( res, token );
-  }
+  });
+
 });
 
 function pullSpaces ( res, token ) {
@@ -96,3 +92,5 @@ function pullSpaces ( res, token ) {
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Assembla Bot Server started at port: ${process.env.PORT}`);
 });
+
+//git push https://git.heroku.com/assembla-bot-server.git master
