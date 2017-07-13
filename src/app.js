@@ -47,9 +47,9 @@ bot.onText(/\/(.+)/, (msg, match) => {
 });
 
 //user hits this route, but doesn't have a auth code, so we redirect
-// app.get('/', (req, res) =>
-//   res.redirect('/auth')
-// );
+app.get('/', (req, res) =>
+  res.send('Hi')
+);
 //
 // app.get('/auth', (req, res) =>
 //   res.redirect(authorization_uri)
