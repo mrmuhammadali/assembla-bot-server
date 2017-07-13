@@ -1,7 +1,7 @@
 const credentials = {
   client: {
-    id: "f4cc077a0bd2a498bc19",
-    secret: "683d920b71d181f3da5170f68d9bcc9da04f7f02"
+    id: "aw66LMAayr54oidmr6CpXy",
+    secret: "f4d61a0c1447576b216c758b5f3daa1d"
   },
   auth: {
     tokenHost: 'https://api.assembla.com',
@@ -48,7 +48,7 @@ bot.onText(/\/(.+)/, (msg, match) => {
 
 //user hits this route, but doesn't have a auth code, so we redirect
 app.get('/', (req, res) =>
-  res.send('Hi')
+  res.redirect('/auth')
 );
 //
 // app.get('/auth', (req, res) =>
@@ -59,6 +59,7 @@ app.get('/', (req, res) =>
 app.get('/callback', (req, res) => {
   const code = req.query.code;
 
+  console.log('Callback Response: ', res);
   //we've got an auth code,
   //so now we can get a bearer token
   oauth2.authorizationCode.getToken({
@@ -73,6 +74,7 @@ app.get('/callback', (req, res) => {
       return;
     }
     const token = oauth2.accessToken.create(result);
+    console.log("Toke: ", token)
     pullSpaces( res, token );
   }
 });
@@ -92,5 +94,5 @@ function pullSpaces ( res, token ) {
 }
 
 app.listen(3000, () => {
-  console.log("Server started at port: 3030");
+  console.log("Server started at port: 3000");
 });
