@@ -60,7 +60,6 @@ app.get('/auth', (req, res) =>
 app.get('/callback', (req, res) => {
   const code = req.query.code;
 
-  console.log('Callback Response: ', res);
   //we've got an auth code,
   //so now we can get a bearer token
   oauth2.authorizationCode.getToken({
@@ -89,7 +88,7 @@ function pullSpaces ( res, token ) {
     }
   }, (error, response, body) => {
     //this contains a json object of all the user's spaces
-    console.log(response)
+    console.log("Response Body(Assembla): ",body)
   });
 
 }
