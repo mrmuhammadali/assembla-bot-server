@@ -88,11 +88,11 @@ function pullSpaces ( res, token ) {
     }
   }, (error, response, body) => {
     //this contains a json object of all the user's spaces
-    console.log("Response Body(Assembla): ",body)
+    console.log("Response Body(Assembla): ", body)
   });
 
 }
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server started at port: ${process.env.PORT}`);
+  console.log(`Assembla Bot Server started at port: ${process.env.PORT}`);
 });
