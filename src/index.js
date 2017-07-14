@@ -3,12 +3,14 @@ const express = require('express');
 const request = require('request');
 const telegram = require('node-telegram-bot-api');
 
-import * as auth from './auth'
+import auth from './auth'
 import * as utils from './utils'
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use('/callback', auth);
 
 const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
 
@@ -41,9 +43,6 @@ app.get('/', (req, res) =>
 // );
 
 //callback url route specifed when you made your app
-app.get('/callback', (req, res) => {
-  auth.callback(req, res)
-});
 
 function pullSpaces ( res, token ) {
   request({

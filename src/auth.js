@@ -1,8 +1,9 @@
 import * as utils from './utils'
 
+const router = require('express').Router()
 const oauth2 = require('simple-oauth2').create(utils.CREDENTIALS)
 
-export function callback(req, res) {
+export default router.get((req, res) => {
   console.log("Callback Response(Assembla):", res)
   //we've got an auth code,
   //so now we can get a bearer token
@@ -20,5 +21,5 @@ export function callback(req, res) {
     res.redirect('https://t.me/AssemblaBot');
 
     // pullSpace(res, token)
-  });
-}
+  })
+})

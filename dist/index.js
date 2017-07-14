@@ -2,13 +2,15 @@
 
 var _auth = require('./auth');
 
-var auth = _interopRequireWildcard(_auth);
+var _auth2 = _interopRequireDefault(_auth);
 
 var _utils = require('./utils');
 
 var utils = _interopRequireWildcard(_utils);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var bodyParser = require('body-parser');
 var express = require('express');
@@ -18,6 +20,8 @@ var telegram = require('node-telegram-bot-api');
 var app = express();
 
 app.use(bodyParser.json());
+
+app.use('/callback', _auth2.default);
 
 var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
 
@@ -53,9 +57,6 @@ app.get('/', function (req, res) {
 // );
 
 //callback url route specifed when you made your app
-app.get('/callback', function (req, res) {
-  auth.callback(req, res);
-});
 
 function pullSpaces(res, token) {
   request({
