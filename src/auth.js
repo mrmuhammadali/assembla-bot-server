@@ -2,11 +2,6 @@ import * as utils from './utils'
 
 const oauth2 = require('simple-oauth2').create(utils.CREDENTIALS)
 
-export const AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
-  client_id: utils.CREDENTIALS.client.id,
-  response_type: 'code'
-});
-
 export function callback(req, res) {
   console.log("Callback Response(Assembla):", res)
   //we've got an auth code,

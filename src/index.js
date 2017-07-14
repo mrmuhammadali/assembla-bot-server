@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
 
-bot.setWebHook(`${utils.BASE_URL}/bot${utils.TELEGRAM_TOKEN}`)
+// bot.setWebHook(`${utils.BASE_URL}/bot${utils.TELEGRAM_TOKEN}`)
 
 bot.onText(/\/(.+)/, (msg, match) => {
   const chatId = msg.chat.id;
@@ -20,7 +20,7 @@ bot.onText(/\/(.+)/, (msg, match) => {
 
     case 'connect': {
       console.log("connect: ", chatId)
-      bot.sendMessage(chatId, `Open this link to authorize the bot:\n${auth.AUTHORIZATION_URI}`);
+      bot.sendMessage(chatId, `Open this link to authorize the bot:\n${utils.AUTHORIZATION_URI}`);
       return;
     }
 
