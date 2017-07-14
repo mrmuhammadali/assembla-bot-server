@@ -1,16 +1,14 @@
 'use strict';
 
-var _auth = require('./auth');
+var _routes = require('./routes');
 
-var _auth2 = _interopRequireDefault(_auth);
+var routes = _interopRequireWildcard(_routes);
 
 var _utils = require('./utils');
 
 var utils = _interopRequireWildcard(_utils);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var bodyParser = require('body-parser');
 var express = require('express');
@@ -21,7 +19,7 @@ var app = express();
 
 app.use(bodyParser.json());
 
-app.use('/callback', _auth2.default);
+app.use('/callback', routes.authCallback);
 
 var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
 

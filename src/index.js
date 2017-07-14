@@ -3,14 +3,14 @@ const express = require('express');
 const request = require('request');
 const telegram = require('node-telegram-bot-api');
 
-import auth from './auth'
+import * as routes from './routes'
 import * as utils from './utils'
 
 const app = express();
 
 app.use(bodyParser.json());
 
-app.use('/callback', auth);
+app.use('/callback', routes.authCallback);
 
 const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
 
