@@ -13,7 +13,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var router = require('express').Router();
 var oauth2 = require('simple-oauth2').create(utils.CREDENTIALS);
 
-exports.default = router.get(function (req, res) {
+exports.default = router.get('', function (req, res) {
   console.log("Callback Response(Assembla):", res);
   //we've got an auth code,
   //so now we can get a bearer token
