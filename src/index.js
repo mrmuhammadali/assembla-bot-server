@@ -29,7 +29,7 @@ bot.onText(/\/(.+)/, (msg, match) => {
 
     case 'connect': {
       console.log("connect: ", chatId)
-      utils.AUTHORIZATION_URI.state = chatId
+      utils.AUTHORIZATION_URI.state.chatId = chatId
       bot.sendMessage(chatId, `Open this link to authorize the bot:\n${utils.AUTHORIZATION_URI}`);
       return;
     }

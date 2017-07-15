@@ -18,6 +18,5 @@ const oauth2 = require('simple-oauth2').create(CREDENTIALS)
 
 export const AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
   client_id: CREDENTIALS.client.id,
-  response_type: 'code',
-  state: ''
+  response_type: 'code'
 });
