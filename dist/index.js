@@ -15,6 +15,8 @@ var express = require('express');
 var request = require('request');
 var telegram = require('node-telegram-bot-api');
 
+var oauth2 = require('simple-oauth2').create(utils.CREDENTIALS);
+
 var app = express();
 
 var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
@@ -39,8 +41,14 @@ bot.onText(/\/(.+)/, function (msg, match) {
     case 'connect':
       {
         console.log("connect: ", chatId);
-        utils.AUTHORIZATION_URI.state = { chatId: chatId };
-        bot.sendMessage(chatId, 'Open this link to authorize the bot:\n' + utils.AUTHORIZATION_URI);
+
+        var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
+          client_id: CREDENTIALS.client.id,
+          response_type: 'code',
+          state: chatId
+        });
+
+        bot.sendMessage(chatId, 'Open this link to authorize the bot:\n' + AUTHORIZATION_URI);
         return;
       }
 

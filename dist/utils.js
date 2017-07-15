@@ -18,10 +18,3 @@ var CREDENTIALS = exports.CREDENTIALS = {
     tokenPath: '/token'
   }
 };
-
-var oauth2 = require('simple-oauth2').create(CREDENTIALS);
-
-var AUTHORIZATION_URI = exports.AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
-  client_id: CREDENTIALS.client.id,
-  response_type: 'code'
-});

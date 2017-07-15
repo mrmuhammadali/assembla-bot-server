@@ -6,6 +6,8 @@ const telegram = require('node-telegram-bot-api');
 import * as routes from './routes'
 import * as utils from './utils'
 
+const oauth2 = require('simple-oauth2').create(utils.CREDENTIALS)
+
 const app = express();
 
 const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
@@ -29,8 +31,14 @@ bot.onText(/\/(.+)/, (msg, match) => {
 
     case 'connect': {
       console.log("connect: ", chatId)
-      utils.AUTHORIZATION_URI.state = { chatId }
-      bot.sendMessage(chatId, `Open this link to authorize the bot:\n${utils.AUTHORIZATION_URI}`);
+
+      const AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
+        client_id: CREDENTIALS.client.id,
+        response_type: 'code',
+        state: chatId
+      });
+
+      bot.sendMessage(chatId, `Open this link to authorize the bot:\n${AUTHORIZATION_URI}`);
       return;
     }
 
