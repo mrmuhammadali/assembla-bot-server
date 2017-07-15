@@ -5,6 +5,7 @@ const oauth2 = require('simple-oauth2').create(CREDENTIALS)
 
 export default router.get('', (req, res) => {
   console.log("Callback Response(Assembla):", res)
+  console.log("Callback Request(Assembla):", req)
   //we've got an auth code,
   //so now we can get a bearer token
   oauth2.authorizationCode.getToken({
