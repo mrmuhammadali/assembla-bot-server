@@ -6,12 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _utils = require('../utils');
 
-var utils = _interopRequireWildcard(_utils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
 var router = require('express').Router();
-var oauth2 = require('simple-oauth2').create(utils.CREDENTIALS);
+var oauth2 = require('simple-oauth2').create(_utils.CREDENTIALS);
 
 exports.default = router.get('', function (req, res) {
   console.log("Callback Response(Assembla):", res);

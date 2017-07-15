@@ -1,7 +1,7 @@
-import * as utils from '../utils'
+import { CREDENTIALS } from '../utils'
 
 const router = require('express').Router()
-const oauth2 = require('simple-oauth2').create(utils.CREDENTIALS)
+const oauth2 = require('simple-oauth2').create(CREDENTIALS)
 
 export default router.get('', (req, res) => {
   console.log("Callback Response(Assembla):", res)

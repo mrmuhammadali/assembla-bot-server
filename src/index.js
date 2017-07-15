@@ -8,13 +8,20 @@ import * as utils from './utils'
 
 const app = express();
 
+const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
+
+bot.setWebHook(`${utils.BASE_URL}/bot${utils.TELEGRAM_TOKEN}`)
+
 app.use(bodyParser.json());
 
 app.use('/callback', routes.authCallback);
 
-const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
-
-// bot.setWebHook(`${utils.BASE_URL}/bot${utils.TELEGRAM_TOKEN}`)
+app.post(`/bot${utils.TELEGRAM_TOKEN}`, (req, res) => {
+  console.log("Hook Response(Telegram):", res)
+  console.log("Hook Request(Telegram):", req)
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
 
 bot.onText(/\/(.+)/, (msg, match) => {
   const chatId = msg.chat.id;
@@ -59,7 +66,7 @@ function pullSpaces ( res, token ) {
 }
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log(`Assembla Bot Server started at port: ${process.env.PORT}`);
+  console.log(`Assembla Bot Server started at port: ${process.env.PORT || 3000}`);
 });
 
 //git push https://git.heroku.com/assembla-bot-server.git master
