@@ -43,7 +43,7 @@ bot.onText(/\/(.+)/, function (msg, match) {
         console.log("connect: ", chatId);
 
         var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
-          client_id: CREDENTIALS.client.id,
+          client_id: utils.CREDENTIALS.client.id,
           response_type: 'code',
           state: chatId
         });
