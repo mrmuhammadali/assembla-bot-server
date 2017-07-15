@@ -10,12 +10,14 @@ var router = require('express').Router();
 var oauth2 = require('simple-oauth2').create(_utils.CREDENTIALS);
 
 exports.default = router.get('', function (req, res) {
-  console.log("Callback Response(Assembla):", res);
-  console.log("Callback Request(Assembla):", req);
+  var _req$query$code = req.query.code,
+      code = _req$query$code.code,
+      state = _req$query$code.state;
   //we've got an auth code,
   //so now we can get a bearer token
+
   oauth2.authorizationCode.getToken({
-    code: req.query.code,
+    code: code,
     grant_type: 'authorization_code'
   }, function (error, result) {
     if (error) {
@@ -24,7 +26,9 @@ exports.default = router.get('', function (req, res) {
       return;
     }
     var token = oauth2.accessToken.create(result);
+
     console.log("Token: ", token);
+    console.log("ChatId: ", state);
     res.redirect('https://t.me/AssemblaBot');
 
     // pullSpace(res, token)
