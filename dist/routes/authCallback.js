@@ -10,9 +10,9 @@ var router = require('express').Router();
 var oauth2 = require('simple-oauth2').create(_utils.CREDENTIALS);
 
 exports.default = router.get('', function (req, res) {
-  var _req$query$code = req.query.code,
-      code = _req$query$code.code,
-      state = _req$query$code.state;
+  var _req$query = req.query,
+      code = _req$query.code,
+      state = _req$query.state;
   //we've got an auth code,
   //so now we can get a bearer token
 
