@@ -1,6 +1,6 @@
 export const ASSEMBLA_URL = 'https://api.assembla.com'
 export const BASE_URL = 'https://assembla-bot-server.herokuapp.com';
-export const TELEGRAM_TOKEN = '441601404:AAEBmrTkSSJFhOt-Cihadlo2h8g6sKVtIs4'
+export const TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72ZbYx2u4gTLAWU'
 export const TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot'
 
 export const ASSEMBLA_CREDENTIALS = {

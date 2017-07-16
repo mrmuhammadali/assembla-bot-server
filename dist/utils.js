@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var ASSEMBLA_URL = exports.ASSEMBLA_URL = 'https://api.assembla.com';
 var BASE_URL = exports.BASE_URL = 'https://assembla-bot-server.herokuapp.com';
-var TELEGRAM_TOKEN = exports.TELEGRAM_TOKEN = '441601404:AAEBmrTkSSJFhOt-Cihadlo2h8g6sKVtIs4';
+var TELEGRAM_TOKEN = exports.TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72ZbYx2u4gTLAWU';
 var TELEGRAM_BOT_URL = exports.TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot';
 
 var ASSEMBLA_CREDENTIALS = exports.ASSEMBLA_CREDENTIALS = {

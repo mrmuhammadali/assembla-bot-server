@@ -57,17 +57,18 @@ bot.onText(/\/(.+)/, function (msg, match) {
 });
 
 // token.token.access_token
+// /spaces/cTOCMCa_4r57Jddmr6CpXy
 app.get('/spaces', function (req, res) {
   request({
     method: 'GET',
-    uri: 'https://api.assembla.com/v1/spaces',
+    uri: 'https://api.assembla.com/v1/activity?space_id=cTOCMCa_4r57Jddmr6CpXy',
     auth: {
       bearer: '6511f6e2e3bbc2ec24f5a753f87eadaf'
     }
   }, function (error, response, body) {
     //this contains a json object of all the user's spaces
     console.log("Response Body(Assembla): ", body);
-    res.json(body);
+    res.send(body);
   });
 });
 
