@@ -67,6 +67,7 @@ app.get('/spaces', function (req, res) {
   }, function (error, response, body) {
     //this contains a json object of all the user's spaces
     console.log("Response Body(Assembla): ", body);
+    res.json(body);
   });
 });
 
