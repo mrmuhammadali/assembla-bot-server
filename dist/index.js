@@ -62,7 +62,7 @@ app.get('/spaces', function (req, res) {
     method: 'GET',
     uri: 'https://api.assembla.com/v1/spaces',
     auth: {
-      bearer: ""
+      bearer: '6511f6e2e3bbc2ec24f5a753f87eadaf'
     }
   }, function (error, response, body) {
     //this contains a json object of all the user's spaces
