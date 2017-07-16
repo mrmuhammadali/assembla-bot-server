@@ -16,6 +16,7 @@ export default router.get('', (req, res) => {
   }, (error, result) => {
     if (error) {
       console.log(utils.MESSAGE.ACCESS_TOKEN_ERROR, error);
+      bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
       res.redirect(utils.TELEGRAM_BOT_URL);
       return;
     }
@@ -23,7 +24,7 @@ export default router.get('', (req, res) => {
 
     console.log("Token: ", token)
     console.log("ChatId: ", state)
-
+    bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
     res.redirect(utils.TELEGRAM_BOT_URL);
 
     // pullSpace(res, token)

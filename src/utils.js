@@ -31,13 +31,14 @@ export const MESSAGE = {
   CHOOSE_SAPCE: `Please choose a Space you'd like to receive notifications from.`,
   ACCESS_TOKEN_ERROR: 'Access Token Error: ',
   AUTHORIZATION_SUCCESSFUL: `Your Assembla account was connected successfully!\nYou can now use the /newintegration command.`,
+  AUTHORIZATION_FAILED: `Authorization failed!\n\nUse /connect to authorize bot via OAuth.`,
   NOTHING_INTEGRATED: 'No Assembla integrations have been set up with this conversation.',
   NOT_AUTHORIZED: `Bot don't have access to your Assembla Spaces.\n\nUse /connect to authorize bot via OAuth.`,
-  INTRODUCE_BOT: `I'm a Assembla bot.\n\nAvailable commands:\n
-  /connect - Authorize bot via OAuth\n
-  /newintegration - Add integration with a GitHub repository\n
-  /listintegrations - List all current integrations\n
-  /delintegration - Delete integration\n
+  INTRODUCE_BOT: `I'm a Assembla bot. I'll send notifications of activities in a space.\n\nAvailable commands:
+  /connect - Authorize bot via OAuth
+  /newintegration - Add integration with a GitHub repository
+  /listintegrations - List all current integrations
+  /delintegration - Delete integration
   /help - List available commands
   /cancel - Cancel the current command`
 }

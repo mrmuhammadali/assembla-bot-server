@@ -56,18 +56,19 @@ bot.onText(/\/(.+)/, function (msg, match) {
   }
 });
 
-function pullSpaces(token) {
+// token.token.access_token
+app.get('/spaces', function (req, res) {
   request({
     method: 'GET',
     uri: 'https://api.assembla.com/v1/spaces',
     auth: {
-      bearer: token.token.access_token
+      bearer: ""
     }
   }, function (error, response, body) {
     //this contains a json object of all the user's spaces
     console.log("Response Body(Assembla): ", body);
   });
-}
+});
 
 app.listen(process.env.PORT || 3000, function () {
   console.log('Assembla Bot Server started at port: ' + (process.env.PORT || 3000));
