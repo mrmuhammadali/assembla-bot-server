@@ -47,15 +47,17 @@ bot.onText(/\/(.+)/, (msg, match) => {
 // token.token.access_token
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
 app.get('/spaces', (req, res) => {
+  const { space_id } = req.query
   request({
     method: 'GET',
-    uri: 'https://api.assembla.com/v1/activity?space_id=cTOCMCa_4r57Jddmr6CpXy',
+    uri: `https://api.assembla.com/v1/activity.json?space_id=${space_id}`,
     auth: {
       bearer: '6511f6e2e3bbc2ec24f5a753f87eadaf'
     }
   }, (error, response, body) => {
     //this contains a json object of all the user's spaces
     console.log("Response Body(Assembla): ", body)
+    console.log(req.query)
     res.send(body)
   });
 
