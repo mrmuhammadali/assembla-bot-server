@@ -6,8 +6,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _utils = require('../utils');
 
+var utils = _interopRequireWildcard(_utils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var telegram = require('node-telegram-bot-api');
 var router = require('express').Router();
-var oauth2 = require('simple-oauth2').create(_utils.CREDENTIALS);
+var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
+
+var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
 
 exports.default = router.get('', function (req, res) {
   var _req$query = req.query,
@@ -21,15 +28,16 @@ exports.default = router.get('', function (req, res) {
     grant_type: 'authorization_code'
   }, function (error, result) {
     if (error) {
-      console.log('Access Token Error: ', error);
-      res.redirect('https://t.me/AssemblaBot');
+      console.log(utils.MESSAGE.ACCESS_TOKEN_ERROR, error);
+      res.redirect(utils.TELEGRAM_BOT_URL);
       return;
     }
     var token = oauth2.accessToken.create(result);
 
     console.log("Token: ", token);
     console.log("ChatId: ", state);
-    res.redirect('https://t.me/AssemblaBot');
+
+    res.redirect(utils.TELEGRAM_BOT_URL);
 
     // pullSpace(res, token)
   });

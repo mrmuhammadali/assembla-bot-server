@@ -1,8 +1,9 @@
 export const ASSEMBLA_URL = 'https://api.assembla.com'
 export const BASE_URL = 'https://assembla-bot-server.herokuapp.com';
 export const TELEGRAM_TOKEN = '441601404:AAEBmrTkSSJFhOt-Cihadlo2h8g6sKVtIs4'
+export const TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot'
 
-export const CREDENTIALS = {
+export const ASSEMBLA_CREDENTIALS = {
   client: {
     id: "aw66LMAayr54oidmr6CpXy",
     secret: "f4d61a0c1447576b216c758b5f3daa1d"
@@ -12,4 +13,31 @@ export const CREDENTIALS = {
     authorizePath: '/authorization',
     tokenPath: '/token'
   }
+}
+
+export const COMMANDS = {
+  START: 'start',
+  CONNECT: 'connect',
+  NEW_INTEGRATION: 'newintegration',
+  LIST_INTEGRATION: 'listintegration',
+  DELETE_INTEGRATION: 'delintegration',
+  HELP: 'help',
+  CANCEL: 'cancel'
+}
+
+export const MESSAGE = {
+  COMMAND_NOT_FOUND: 'Command not found!',
+  CONNECT: `Open this link to authorize the bot:\n`,
+  CHOOSE_SAPCE: `Please choose a Space you'd like to receive notifications from.`,
+  ACCESS_TOKEN_ERROR: 'Access Token Error: ',
+  AUTHORIZATION_SUCCESSFUL: `Your Assembla account was connected successfully!\nYou can now use the /newintegration command.`,
+  NOTHING_INTEGRATED: 'No Assembla integrations have been set up with this conversation.',
+  NOT_AUTHORIZED: `Bot don't have access to your Assembla Spaces.\n\nUse /connect to authorize bot via OAuth.`,
+  INTRODUCE_BOT: `I'm a Assembla bot.\n\nAvailable commands:\n
+  /connect - Authorize bot via OAuth\n
+  /newintegration - Add integration with a GitHub repository\n
+  /listintegrations - List all current integrations\n
+  /delintegration - Delete integration\n
+  /help - List available commands
+  /cancel - Cancel the current command`
 }
