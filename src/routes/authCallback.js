@@ -1,10 +1,10 @@
 import * as utils from '../utils'
 
-const telegram = require('node-telegram-bot-api');
+// const telegram = require('node-telegram-bot-api');
 const router = require('express').Router()
 const oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS)
 
-const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
+// const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
 
 export default router.get('', (req, res) => {
   const { code, state } = req.query
@@ -16,7 +16,7 @@ export default router.get('', (req, res) => {
   }, (error, result) => {
     if (error) {
       console.log(utils.MESSAGE.ACCESS_TOKEN_ERROR, error);
-      bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
+      // bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
       res.redirect(utils.TELEGRAM_BOT_URL);
       return;
     }
@@ -24,7 +24,7 @@ export default router.get('', (req, res) => {
 
     console.log("Token: ", token)
     console.log("ChatId: ", state)
-    bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
+    // bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
     res.redirect(utils.TELEGRAM_BOT_URL);
 
     // pullSpace(res, token)
