@@ -1,5 +1,5 @@
 import * as utils from '../utils'
-import Chat from '../models'
+// import Chat from '../models'
 
 const telegram = require('node-telegram-bot-api');
 const router = require('express').Router()
@@ -26,20 +26,20 @@ export default router.get('', (req, res) => {
 
     console.log("Token: ", token)
     console.log("ChatId: ", chatId)
-    let newChat = new Chat({ _id: chatId, token })
-    newChat.save((err, res) => {
-      if (err) {
-        Chat.updateToken(chatId, token, (updateTokenError, updateTokenResponse) => {
-          if (updateTokenError)
-            bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
-          else
-            bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
-        })
-      }
-      else
-        bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
-    });
-
+    // let newChat = new Chat({ _id: chatId, token })
+    // newChat.save((err, res) => {
+    //   if (err) {
+    //     Chat.updateToken(chatId, token, (updateTokenError, updateTokenResponse) => {
+    //       if (updateTokenError)
+    //         bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
+    //       else
+    //         bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
+    //     })
+    //   }
+    //   else
+    //     bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
+    // });
+    bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
     res.redirect(utils.TELEGRAM_BOT_URL);
 
 

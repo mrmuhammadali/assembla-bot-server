@@ -12,10 +12,6 @@ var _services = require('./services');
 
 var _services2 = _interopRequireDefault(_services);
 
-var _models = require('./models');
-
-var _models2 = _interopRequireDefault(_models);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -30,6 +26,7 @@ var socketio = require('feathers-socketio');
 var socketioClient = require('feathers-socketio/client');
 var telegram = require('node-telegram-bot-api');
 
+// import Chat from './models'
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
 
 var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
@@ -49,11 +46,12 @@ var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback
 //   console.log('Found message', message);
 // });
 
-mongoose.connect(mongoUri);
+// mongoose.connect(mongoUri)
+//
+// mongoose.connection.on('connected', () => {
+//   console.log("Connected to database")
+// })
 
-mongoose.connection.on('connected', function () {
-  console.log("Connected to database");
-});
 
 // Chat.getChatById("12345", (err, res) => {
 //
@@ -72,6 +70,14 @@ bot.onText(/\/(.+)/, function (msg, match) {
   var COMMANDS = utils.COMMANDS;
 
   switch (match[1]) {
+
+    case COMMANDS.START:
+    case COMMANDS.HELP:
+      {
+        bot.sendMessage(chatId, '' + utils.MESSAGE.INTRODUCE_BOT);
+        break;
+      }
+
     case COMMANDS.CONNECT:
       {
 
@@ -85,11 +91,33 @@ bot.onText(/\/(.+)/, function (msg, match) {
         break;
       }
 
-    case COMMANDS.START:
-    case COMMANDS.HELP:
+    case COMMANDS.NEW_INTEGRATION:
       {
-        bot.sendMessage(chatId, '' + utils.MESSAGE.INTRODUCE_BOT);
-        break;
+        Chat.getChatById(chatId, function (err, chat) {
+          if (!err) {
+            var token = chat.token;
+
+            request({
+              method: 'GET',
+              uri: 'https://api.assembla.com/v1/spaces',
+              auth: {
+                bearer: token.access_token
+              }
+            }, function (error, response, body) {
+              console.log("Spaces:", body);
+              //TODO send spaces to bot
+            });
+          }
+        });
+      }
+
+    case COMMANDS.LIST_INTEGRATION:
+      {
+        Chat.getChatById(chatId, function (err, chat) {
+          if (!err) {
+            var integrations = chat.integrations;
+          }
+        });
       }
 
     default:

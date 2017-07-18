@@ -11,7 +11,7 @@ const telegram = require('node-telegram-bot-api');
 import * as routes from './routes'
 import * as utils from './utils'
 import services from './services'
-import Chat from './models'
+// import Chat from './models'
 const mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
 
 const oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS)
@@ -35,11 +35,11 @@ const app = feathers()
 //   console.log('Found message', message);
 // });
 
-mongoose.connect(mongoUri)
-
-mongoose.connection.on('connected', () => {
-  console.log("Connected to database")
-})
+// mongoose.connect(mongoUri)
+//
+// mongoose.connection.on('connected', () => {
+//   console.log("Connected to database")
+// })
 
 
 // Chat.getChatById("12345", (err, res) => {
@@ -62,6 +62,13 @@ bot.onText(/\/(.+)/, (msg, match) => {
   const COMMANDS = utils.COMMANDS;
 
   switch (match[1]){
+
+    case COMMANDS.START:
+    case COMMANDS.HELP: {
+      bot.sendMessage(chatId, `${utils.MESSAGE.INTRODUCE_BOT}`);
+      break;
+    }
+
     case COMMANDS.CONNECT: {
 
       const AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
@@ -74,10 +81,33 @@ bot.onText(/\/(.+)/, (msg, match) => {
       break;
     }
 
-    case COMMANDS.START:
-    case COMMANDS.HELP: {
-      bot.sendMessage(chatId, `${utils.MESSAGE.INTRODUCE_BOT}`);
-      break;
+    case COMMANDS.NEW_INTEGRATION: {
+      Chat.getChatById(chatId, (err, chat) => {
+        if (!err) {
+          const {token} = chat
+          request({
+            method: 'GET',
+            uri: `https://api.assembla.com/v1/spaces`,
+            auth: {
+              bearer: token.access_token
+            }
+          }, (error, response, body) => {
+            console.log("Spaces:", body)
+            //TODO send spaces to bot
+          });
+        }
+      })
+    }
+
+    case COMMANDS.LIST_INTEGRATION: {
+      Chat.getChatById(chatId, (err, chat) => {
+        if (!err) {
+          const {integrations} = chat
+
+          
+
+        }
+      })
     }
 
     default: {
