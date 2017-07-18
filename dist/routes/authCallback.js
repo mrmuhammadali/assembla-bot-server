@@ -16,7 +16,7 @@ var telegram = require('node-telegram-bot-api');
 var router = require('express').Router();
 var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
 
-var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
+// const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
 
 exports.default = router.get('', function (req, res) {
   var _req$query = req.query,
@@ -31,7 +31,7 @@ exports.default = router.get('', function (req, res) {
   }, function (error, result) {
     if (error) {
       console.log(utils.MESSAGE.ACCESS_TOKEN_ERROR, error);
-      bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED);
+      // bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
       res.redirect(utils.TELEGRAM_BOT_URL);
       return;
     }
@@ -53,7 +53,7 @@ exports.default = router.get('', function (req, res) {
     //   else
     //     bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
     // });
-    bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
+    // bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
     res.redirect(utils.TELEGRAM_BOT_URL);
   });
 });
