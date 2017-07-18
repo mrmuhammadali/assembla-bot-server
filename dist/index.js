@@ -8,21 +8,62 @@ var _utils = require('./utils');
 
 var utils = _interopRequireWildcard(_utils);
 
+var _services = require('./services');
+
+var _services2 = _interopRequireDefault(_services);
+
+var _models = require('./models');
+
+var _models2 = _interopRequireDefault(_models);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var bodyParser = require('body-parser');
-var express = require('express');
+var feathers = require('feathers');
+var featherClient = require('feathers/client');
+var io = require('socket.io-client');
+var mongoose = require('mongoose');
 var request = require('request');
+var socketio = require('feathers-socketio');
+var socketioClient = require('feathers-socketio/client');
 var telegram = require('node-telegram-bot-api');
 
 var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
 
-var app = express();
+var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
+
+var socket = io('http://localhost:3000/');
+// const client = featherClient();
+//
+// // Set up Socket.io client with the socket
+// client.configure(socketioClient(socket));
+
+// app.service('users').get('cTOCMCa_4r57Jddmr6CpXy')
+
+// client.service('users').get(`cTOCMCa_4r57Jddmr6CpXy`)
+// socket.emit('users::get', `cTOCMCa_4r57Jddmr6CpXy`, { fetch: 'all' }, (error, message) => {
+//   console.log('Found message', message);
+// });
+
+mongoose.connect("mongodb://localhost:27017/assemblaDb");
+
+mongoose.connection.on('connected', function () {
+  console.log("Connected to database");
+});
+
+// Chat.getChatById("12345", (err, res) => {
+//
+//     console.log(res)
+//   Chat.integrateSpaceInChat("12345", {_id: "id", spaceName: "dusion"}, (erro, respo) => {
+//     console.log("UpdateChatById:", respo)
+//     console.log("UpdateChatById:", erro)
+//   })
+// })
+
+
 var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
-
-app.use(bodyParser.json());
-
-app.use('/callback', routes.authCallback);
 
 bot.onText(/\/(.+)/, function (msg, match) {
   var chatId = msg.chat.id;
@@ -65,7 +106,7 @@ app.get('/spaces', function (req, res) {
     method: 'GET',
     uri: 'https://api.assembla.com/v1/activity.json?space_id=' + space_id,
     auth: {
-      bearer: '6511f6e2e3bbc2ec24f5a753f87eadaf'
+      bearer: 'b68c758499f479102aa6a81f478237e3'
     }
   }, function (error, response, body) {
     //this contains a json object of all the user's spaces
@@ -75,8 +116,8 @@ app.get('/spaces', function (req, res) {
   });
 });
 
-app.listen(process.env.PORT || 3000, function () {
-  console.log('Assembla Bot Server started at port: ' + (process.env.PORT || 3000));
+app.listen(process.env.PORT || 3030, function () {
+  console.log('Assembla Bot Server started at port: ' + (process.env.PORT || 3030));
 });
 
 //git push https://git.heroku.com/assembla-bot-server.git master

@@ -34,6 +34,7 @@ export const MESSAGE = {
   AUTHORIZATION_FAILED: `Authorization failed!\n\nUse /connect to authorize bot via OAuth.`,
   NOTHING_INTEGRATED: 'No Assembla integrations have been set up with this conversation.',
   NOT_AUTHORIZED: `Bot don't have access to your Assembla Spaces.\n\nUse /connect to authorize bot via OAuth.`,
+  SPACE_ALREADY_EXIST: "Space already integrated in this chat.",
   INTRODUCE_BOT: `I'm a Assembla bot. I'll send notifications of activities in a space.\n\nAvailable commands:
   /connect - Authorize bot via OAuth
   /newintegration - Add integration with a GitHub repository

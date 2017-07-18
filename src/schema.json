@@ -1,0 +1,17 @@
+[
+  {
+    "chatId": {
+      "integrations": [
+        {
+          "spaceId": "",
+          "name": ""
+        }
+      ],
+      "token": {
+        "accessToken": "",
+        "refreshToken": "",
+        "expiresIn": ""
+      }
+    }
+  }
+]
