@@ -21,7 +21,7 @@ const app = feathers()
   .configure(socketio())
   .configure(services)
 
-const socket = io('http://localhost:3000/');
+// const socket = io('http://localhost:3000/');
 // const client = featherClient();
 //
 // // Set up Socket.io client with the socket
@@ -34,7 +34,7 @@ const socket = io('http://localhost:3000/');
 //   console.log('Found message', message);
 // });
 
-mongoose.connect("mongodb://localhost:27017/assemblaDb")
+mongoose.connect("mongodb://assembla-bot-server.herokuapp.com:27017/assemblaDb")
 
 mongoose.connection.on('connected', () => {
   console.log("Connected to database")
