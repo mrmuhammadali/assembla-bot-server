@@ -63,69 +63,69 @@ var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback
 // })
 
 
-var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
-
-bot.onText(/\/(.+)/, function (msg, match) {
-  var chatId = msg.chat.id;
-  var COMMANDS = utils.COMMANDS;
-
-  switch (match[1]) {
-
-    case COMMANDS.START:
-    case COMMANDS.HELP:
-      {
-        bot.sendMessage(chatId, '' + utils.MESSAGE.INTRODUCE_BOT);
-        break;
-      }
-
-    case COMMANDS.CONNECT:
-      {
-
-        var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
-          client_id: utils.ASSEMBLA_CREDENTIALS.client.id,
-          response_type: 'code',
-          state: chatId
-        });
-
-        bot.sendMessage(chatId, '' + utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
-        break;
-      }
-
-    case COMMANDS.NEW_INTEGRATION:
-      {
-        Chat.getChatById(chatId, function (err, chat) {
-          if (!err) {
-            var token = chat.token;
-
-            request({
-              method: 'GET',
-              uri: 'https://api.assembla.com/v1/spaces',
-              auth: {
-                bearer: token.access_token
-              }
-            }, function (error, response, body) {
-              console.log("Spaces:", body);
-              //TODO send spaces to bot
-            });
-          }
-        });
-      }
-
-    case COMMANDS.LIST_INTEGRATION:
-      {
-        Chat.getChatById(chatId, function (err, chat) {
-          if (!err) {
-            var integrations = chat.integrations;
-          }
-        });
-      }
-
-    default:
-      {
-        bot.sendMessage(chatId, utils.MESSAGE.COMMAND_NOT_FOUND);
-      }
-  }
-});
+// var bot = new telegram(utils.TELEGRAM_TOKEN, { polling: true });
+//
+// bot.onText(/\/(.+)/, function (msg, match) {
+//   var chatId = msg.chat.id;
+//   var COMMANDS = utils.COMMANDS;
+//
+//   switch (match[1]) {
+//
+//     case COMMANDS.START:
+//     case COMMANDS.HELP:
+//       {
+//         bot.sendMessage(chatId, '' + utils.MESSAGE.INTRODUCE_BOT);
+//         break;
+//       }
+//
+//     case COMMANDS.CONNECT:
+//       {
+//
+//         var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
+//           client_id: utils.ASSEMBLA_CREDENTIALS.client.id,
+//           response_type: 'code',
+//           state: chatId
+//         });
+//
+//         bot.sendMessage(chatId, '' + utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
+//         break;
+//       }
+//
+//     case COMMANDS.NEW_INTEGRATION:
+//       {
+//         Chat.getChatById(chatId, function (err, chat) {
+//           if (!err) {
+//             var token = chat.token;
+//
+//             request({
+//               method: 'GET',
+//               uri: 'https://api.assembla.com/v1/spaces',
+//               auth: {
+//                 bearer: token.access_token
+//               }
+//             }, function (error, response, body) {
+//               console.log("Spaces:", body);
+//               //TODO send spaces to bot
+//             });
+//           }
+//         });
+//       }
+//
+//     case COMMANDS.LIST_INTEGRATION:
+//       {
+//         Chat.getChatById(chatId, function (err, chat) {
+//           if (!err) {
+//             var integrations = chat.integrations;
+//           }
+//         });
+//       }
+//
+//     default:
+//       {
+//         bot.sendMessage(chatId, utils.MESSAGE.COMMAND_NOT_FOUND);
+//       }
+//   }
+// });
 
 // token.token.access_token
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
