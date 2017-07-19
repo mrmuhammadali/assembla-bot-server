@@ -4,7 +4,8 @@ const Sequelize = require('sequelize');
 
 // const DB_CONFIG = DB_CONFIG_LOCAL
 
-const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options)
+const sequelize = new Sequelize(process.env.DATABASE_URL)
+// const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options)
 
 
 var models = [
