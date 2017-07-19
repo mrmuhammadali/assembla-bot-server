@@ -19,9 +19,7 @@ models.forEach(function(model) {
 // describe relationships
 (function(m) {
   m.Chat.hasMany(m.Integration, {foreignKey: 'chatId'});
-  sequelize.sync().then(()=>{
-    console.log("Successfully synced!!!")
-  })
+  sequelize.sync()
 })(module.exports);
 
 // export connection
