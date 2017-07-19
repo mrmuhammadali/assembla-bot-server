@@ -4,10 +4,13 @@ export const TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72ZbYx2u4gTLAWU'
 export const TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot'
 
 export const DB_CONFIG = {
-  host: 'ec2-107-20-250-195.compute-1.amazonaws.com:5432',
   name: 'd4mvs46suu2upa',
   user: 'wepcrlefgqfwky',
-  password: '04bb6a1889990a139030ac0bcff1c9c4ca1501b5a90c5451c8f4b2fb4ff9927c'
+  password: '04bb6a1889990a139030ac0bcff1c9c4ca1501b5a90c5451c8f4b2fb4ff9927c',
+  options: {
+    host: 'ec2-107-20-250-195.compute-1.amazonaws.com:5432',
+    dialect: 'postgres'
+  }
 }
 export const DB_CONFIG_LOCAL = {
   name: 'assembla',

@@ -1,8 +1,8 @@
-import {DB_CONFIG_LOCAL} from "../utils"
+import {DB_CONFIG} from "../utils"
 
 const Sequelize = require('sequelize');
 
-const DB_CONFIG = DB_CONFIG_LOCAL
+// const DB_CONFIG = DB_CONFIG_LOCAL
 
 const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options)
 
