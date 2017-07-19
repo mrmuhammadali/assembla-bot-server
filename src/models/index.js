@@ -3,7 +3,7 @@ import {DB_CONFIG} from "../utils"
 const Sequelize = require('sequelize');
 
 // const DB_CONFIG = DB_CONFIG_LOCAL
-
+console.log(process.env.DATABASE_URL)
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 // const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options)
 
