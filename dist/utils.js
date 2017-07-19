@@ -14,6 +14,7 @@ var DB_CONFIG = exports.DB_CONFIG = {
   password: '04bb6a1889990a139030ac0bcff1c9c4ca1501b5a90c5451c8f4b2fb4ff9927c',
   options: {
     host: 'ec2-107-20-250-195.compute-1.amazonaws.com',
+    port: '5432',
     dialect: 'postgres',
     protocol: 'postgres',
     dialectOptions: {
