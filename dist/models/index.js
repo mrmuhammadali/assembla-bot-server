@@ -2,64 +2,24 @@
 
 var _utils = require('../utils');
 
-var mongoose = require('mongoose');
+var Sequelize = require('sequelize');
 
-var Schema = mongoose.Schema;
+var DB_CONFIG = _utils.DB_CONFIG_LOCAL;
 
-var ChatSchema = new Schema({
-  _id: String,
-  integrations: [{
-    _id: String,
-    spaceName: String
-  }],
-  token: {
-    access_token: String,
-    refresh_token: String,
-    expires_in: String
-  }
+var sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options);
 
+var models = ['Chat', 'Integration'];
+models.forEach(function (model) {
+  module.exports[model] = sequelize.import(__dirname + '/' + model);
 });
 
-var Chat = module.exports = mongoose.model('Chat', ChatSchema);
-
-module.exports.getChatById = function (id, callback) {
-  Chat.findById(id, callback);
-};
-
-module.exports.getChatsBySpaceId = function (spaceId, callback) {
-  Chat.find({
-    "integrations": {
-      "$elemMatch": {
-        "_id": spaceId
-      }
-    }
-  }, {
-    "integrations.$._id": spaceId
-  }, callback);
-};
-
-module.exports.integrateSpaceInChat = function (id, space, callback) {
-  Chat.getChatById(id, function (err, chat) {
-    if (!err) {
-      var integrations = chat.integrations;
-
-      if (integrations.filter(function (item) {
-        return item._id === space._id;
-      }).length === 0) {
-        integrations.push(space);
-        Chat.findByIdAndUpdate(id, { $set: chat }, { new: true }, callback);
-      } else {
-        callback({ message: _utils.MESSAGE.SPACE_ALREADY_EXIST });
-      }
-    }
+// describe relationships
+(function (m) {
+  m.Chat.hasMany(m.Integration, { foreignKey: 'chatId' });
+  sequelize.sync().then(function () {
+    console.log("Successfully synced!!!");
   });
-};
+})(module.exports);
 
-module.exports.updateToken = function (id, token, callback) {
-  Chat.getChatById(id, function (err, chat) {
-    if (!err) {
-      chat.token = token;
-      Chat.findByIdAndUpdate(id, { $set: chat }, { new: true }, callback);
-    }
-  });
-};
+// export connection
+module.exports.sequelize = sequelize;

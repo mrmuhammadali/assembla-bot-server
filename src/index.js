@@ -6,15 +6,17 @@ const mongoose = require('mongoose')
 const request = require('request');
 const socketio = require('feathers-socketio');
 const socketioClient = require('feathers-socketio/client')
-const telegram = require('node-telegram-bot-api');
 
 import * as routes from './routes'
-import * as utils from './utils'
+
 import services from './services'
-// import Chat from './models'
+
+import {TelegramBot, BotOperations} from './TelegramBot'
 const mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
 
-const oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS)
+
+import models  from './models'
+
 
 const app = feathers()
   .use(bodyParser.json())
@@ -22,6 +24,35 @@ const app = feathers()
   .configure(socketio())
   .configure(services)
 
+
+
+
+
+// sequelize.sync({force: true})
+//   .then(() => {
+//   Chat.create({
+//     chatId: 23,
+//
+//   })
+//
+//     const dt = {
+//       spaceId: '123',
+//       spaceName: 'Space',
+//       chatId: 23
+//     }
+//     // Integration.beforeCreate((dt) => {
+//     //
+//     //
+//     //
+//     // })
+//     Integration.create(dt)
+//       .then((res) => {
+//         console.log("RES:", res)
+//       })
+//       .catch((err) => {
+//         console.log("eroooor:", err)
+//       })
+//   })
 // const socket = io('http://localhost:3000/');
 // const client = featherClient();
 //
@@ -40,80 +71,13 @@ const app = feathers()
 // mongoose.connection.on('connected', () => {
 //   console.log("Connected to database")
 // })
-
-
-// Chat.getChatById("12345", (err, res) => {
-//
-//     console.log(res)
-//   Chat.integrateSpaceInChat("12345", {_id: "id", spaceName: "dusion"}, (erro, respo) => {
-//     console.log("UpdateChatById:", respo)
-//     console.log("UpdateChatById:", erro)
-//   })
-// })
-
-
-
-
- const bot = new telegram(utils.TELEGRAM_TOKEN, {polling: true});
-
-
+const bot = new TelegramBot()
 bot.onText(/\/(.+)/, (msg, match) => {
-  const chatId = msg.chat.id;
-  const COMMANDS = utils.COMMANDS;
+  new BotOperations().handleCommands(msg, match[1])
+});
 
-  switch (match[1]){
-
-    case COMMANDS.START:
-    case COMMANDS.HELP: {
-      bot.sendMessage(chatId, `${utils.MESSAGE.INTRODUCE_BOT}`);
-      break;
-    }
-
-    case COMMANDS.CONNECT: {
-
-      const AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
-        client_id: utils.ASSEMBLA_CREDENTIALS.client.id,
-        response_type: 'code',
-        state: chatId
-      });
-
-      bot.sendMessage(chatId, `${utils.MESSAGE.CONNECT}${AUTHORIZATION_URI}`);
-      break;
-    }
-
-    case COMMANDS.NEW_INTEGRATION: {
-      Chat.getChatById(chatId, (err, chat) => {
-        if (!err) {
-          const {token} = chat
-          request({
-            method: 'GET',
-            uri: `https://api.assembla.com/v1/spaces`,
-            auth: {
-              bearer: token.access_token
-            }
-          }, (error, response, body) => {
-            console.log("Spaces:", body)
-            //TODO send spaces to bot
-          });
-        }
-      })
-    }
-
-    case COMMANDS.LIST_INTEGRATION: {
-      Chat.getChatById(chatId, (err, chat) => {
-        if (!err) {
-          const {integrations} = chat
-
-          
-
-        }
-      })
-    }
-
-    default: {
-      bot.sendMessage(chatId, utils.MESSAGE.COMMAND_NOT_FOUND);
-    }
-  }
+bot.on('callback_query',  (callbackQuery) => {
+  new BotOperations().handleCallbackQuery(callbackQuery)
 });
 
 // token.token.access_token

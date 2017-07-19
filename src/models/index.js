@@ -1,63 +1,27 @@
-const mongoose = require('mongoose')
+import {DB_CONFIG_LOCAL} from "../utils"
 
-import { MESSAGE } from "../utils"
+const Sequelize = require('sequelize');
 
-const Schema = mongoose.Schema
+const DB_CONFIG = DB_CONFIG_LOCAL
 
-const ChatSchema = new Schema ({
-  _id: String,
-  integrations: [
-    {
-      _id: String,
-      spaceName: String
-    }
-  ],
-  token: {
-    access_token: String,
-    refresh_token: String,
-    expires_in: String
-  }
+const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options)
 
-})
 
-const Chat = module.exports = mongoose.model('Chat', ChatSchema)
+var models = [
+  'Chat',
+  'Integration'
+];
+models.forEach(function(model) {
+  module.exports[model] = sequelize.import(__dirname + '/' + model);
+});
 
-module.exports.getChatById = (id, callback) => {
-  Chat.findById(id, callback)
-}
-
-module.exports.getChatsBySpaceId = (spaceId, callback) => {
-  Chat.find({
-    "integrations": {
-      "$elemMatch": {
-        "_id": spaceId
-      }
-    }
-  }, {
-    "integrations.$._id": spaceId
-  }, callback)
-}
-
-module.exports.integrateSpaceInChat = (id, space, callback) => {
-  Chat.getChatById(id, (err, chat) => {
-    if (!err) {
-      const { integrations } = chat
-      if (integrations.filter(item => item._id === space._id).length === 0){
-        integrations.push(space);
-        Chat.findByIdAndUpdate(id, { $set: chat}, { new: true }, callback);
-      }
-      else {
-        callback({message: MESSAGE.SPACE_ALREADY_EXIST})
-      }
-    }
+// describe relationships
+(function(m) {
+  m.Chat.hasMany(m.Integration, {foreignKey: 'chatId'});
+  sequelize.sync().then(()=>{
+    console.log("Successfully synced!!!")
   })
-}
+})(module.exports);
 
-module.exports.updateToken = (id, token, callback) => {
-  Chat.getChatById(id, (err, chat) => {
-    if (!err) {
-      chat.token = token
-      Chat.findByIdAndUpdate(id, {$set: chat}, {new: true}, callback);
-    }
-  })
-}
+// export connection
+module.exports.sequelize = sequelize;
