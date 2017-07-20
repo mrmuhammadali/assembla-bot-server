@@ -14,43 +14,12 @@ import services from './services'
 import {TelegramBot, BotOperations} from './TelegramBot'
 const mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
 
-
-import models  from './models'
-
-
 const app = feathers()
   .use(bodyParser.json())
   .use('/callback', routes.authCallback)
   .configure(socketio())
   .configure(services)
 
-
-
-// sequelize.sync({force: true})
-//   .then(() => {
-//   Chat.create({
-//     chatId: 23,
-//
-//   })
-//
-//     const dt = {
-//       spaceId: '123',
-//       spaceName: 'Space',
-//       chatId: 23
-//     }
-//     // Integration.beforeCreate((dt) => {
-//     //
-//     //
-//     //
-//     // })
-//     Integration.create(dt)
-//       .then((res) => {
-//         console.log("RES:", res)
-//       })
-//       .catch((err) => {
-//         console.log("eroooor:", err)
-//       })
-//   })
 // const socket = io('http://localhost:3000/');
 // const client = featherClient();
 //

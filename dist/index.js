@@ -10,10 +10,6 @@ var _services2 = _interopRequireDefault(_services);
 
 var _TelegramBot = require('./TelegramBot');
 
-var _models = require('./models');
-
-var _models2 = _interopRequireDefault(_models);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -31,31 +27,6 @@ var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb:/
 
 var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
 
-// sequelize.sync({force: true})
-//   .then(() => {
-//   Chat.create({
-//     chatId: 23,
-//
-//   })
-//
-//     const dt = {
-//       spaceId: '123',
-//       spaceName: 'Space',
-//       chatId: 23
-//     }
-//     // Integration.beforeCreate((dt) => {
-//     //
-//     //
-//     //
-//     // })
-//     Integration.create(dt)
-//       .then((res) => {
-//         console.log("RES:", res)
-//       })
-//       .catch((err) => {
-//         console.log("eroooor:", err)
-//       })
-//   })
 // const socket = io('http://localhost:3000/');
 // const client = featherClient();
 //

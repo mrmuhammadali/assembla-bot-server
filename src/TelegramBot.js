@@ -4,9 +4,9 @@ const telegram = require('node-telegram-bot-api');
 
 import * as utils from './utils'
 import Chat from './models/mongo'
+import models from './models'
 
 let bot = null
-let operations = null
 
 export class TelegramBot {
   constructor() {
@@ -77,61 +77,68 @@ export class BotOperations {
     bot.sendMessage(chatId, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
   }
 
-  handleListIntegrations = (chatId) => {
-    Chat.getChatById(chatId, (err, chat) => {
-      if (!err) {
-        const {integrations} = chat
-        let integrationStr = ''
-        for (let i = 0; i < integrations.length; i++) {
-          integrationStr += `${(i+1)}. ${integrations[i].spaceName}\n`
-        }
-        bot.sendMessage(chatId, integrationStr);
+  fetchSpaces = (chatId, msg, token) => {
+    const opts = {
+      method: 'GET',
+      uri: `https://api.assembla.com/v1/spaces`,
+      auth: {
+        bearer: token.access_token
       }
-    })
+    }
+    request(opts, (error, response, spaces) => {
+      spaces = JSON.parse(spaces)
+      if (spaces.error) {
+        console.log(spaces)
+        bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
+      } else {
+        const names = []
+        for (let i = 0; i < spaces.length; i++) {
+          const spaceId = spaces[i].id
+          const spaceName = spaces[i].name
+          const data = JSON.stringify([spaceId, spaceName]);
+
+          names.push([{text: spaceName, callback_data: data}])
+        }
+
+        const opts = {
+          reply_to_message_id: msg.message_id,
+          reply_markup: {
+            inline_keyboard: names
+          }
+        };
+        bot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE, opts);
+      }
+    });
   }
 
   handleNewIntegration = (chatId, msg) => {
-    Chat.getChatById(chatId, (err, chat) => {
-      if (!err) {
-        const {token} = chat
-        const opts = {
-          method: 'GET',
-          uri: `https://api.assembla.com/v1/spaces`,
-          auth: {
-            bearer: token.access_token
-          }
-        }
-        request(opts, (error, response, spaces) => {
-          spaces = JSON.parse(spaces)
-          if (spaces.error) {
-            console.log(spaces)
-            bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
-          } else {
-            const names = []
-            for (let i = 0; i < spaces.length; i++) {
-              const spaceId = spaces[i].id
-              const spaceName = spaces[i].name
-              const data = JSON.stringify([spaceId, spaceName]);
+    models.Chat.findOne({where: {chatId}})
+      .then( chat => {
+        console.log(chat.dataValues)
+        this.fetchSpaces(chatId, msg, chat.dataValues)
+      })
+    }
 
-              names.push([{text: spaceName, callback_data: data}])
-            }
+  // Mongodb methods
 
-            const opts = {
-              reply_to_message_id: msg.message_id,
-              reply_markup: {
-                inline_keyboard: names
-              }
-            };
-            bot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE, opts);
-          }
-
-        });
-      }
-    })
-  }
-
-  handleDeleteIntegration = () => {
-
-  }
-
+  // handleListIntegrations = (chatId) => {
+  //   Chat.getChatById(chatId, (err, chat) => {
+  //     if (!err) {
+  //       const {integrations} = chat
+  //       let integrationStr = ''
+  //       for (let i = 0; i < integrations.length; i++) {
+  //         integrationStr += `${(i+1)}. ${integrations[i].spaceName}\n`
+  //       }
+  //       bot.sendMessage(chatId, integrationStr);
+  //     }
+  //   })
+  // }
+  //
+  // handleNewIntegration = (chatId, msg) => {
+  //   Chat.getChatById(chatId, (err, chat) => {
+  //     if (!err) {
+  //       this.fetchSpaces(chatId, msg, chat.token)
+  //     }
+  //   })
+  // }
 }

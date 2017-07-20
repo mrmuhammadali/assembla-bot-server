@@ -13,6 +13,10 @@ var _mongo = require('./models/mongo');
 
 var _mongo2 = _interopRequireDefault(_mongo);
 
+var _models = require('./models');
+
+var _models2 = _interopRequireDefault(_models);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -24,7 +28,6 @@ var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
 var telegram = require('node-telegram-bot-api');
 
 var bot = null;
-var operations = null;
 
 var TelegramBot = exports.TelegramBot = function TelegramBot() {
   _classCallCheck(this, TelegramBot);
@@ -35,7 +38,31 @@ var TelegramBot = exports.TelegramBot = function TelegramBot() {
   return bot;
 };
 
-var BotOperations = exports.BotOperations = function BotOperations() {
+var BotOperations =
+
+// Mongodb methods
+
+// handleListIntegrations = (chatId) => {
+//   Chat.getChatById(chatId, (err, chat) => {
+//     if (!err) {
+//       const {integrations} = chat
+//       let integrationStr = ''
+//       for (let i = 0; i < integrations.length; i++) {
+//         integrationStr += `${(i+1)}. ${integrations[i].spaceName}\n`
+//       }
+//       bot.sendMessage(chatId, integrationStr);
+//     }
+//   })
+// }
+//
+// handleNewIntegration = (chatId, msg) => {
+//   Chat.getChatById(chatId, (err, chat) => {
+//     if (!err) {
+//       this.fetchSpaces(chatId, msg, chat.token)
+//     }
+//   })
+// }
+exports.BotOperations = function BotOperations() {
   var _this = this;
 
   _classCallCheck(this, BotOperations);
@@ -104,59 +131,44 @@ var BotOperations = exports.BotOperations = function BotOperations() {
     bot.sendMessage(chatId, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
   };
 
-  this.handleListIntegrations = function (chatId) {
-    _mongo2.default.getChatById(chatId, function (err, chat) {
-      if (!err) {
-        var integrations = chat.integrations;
+  this.fetchSpaces = function (chatId, msg, token) {
+    var opts = {
+      method: 'GET',
+      uri: 'https://api.assembla.com/v1/spaces',
+      auth: {
+        bearer: token.access_token
+      }
+    };
+    request(opts, function (error, response, spaces) {
+      spaces = JSON.parse(spaces);
+      if (spaces.error) {
+        console.log(spaces);
+        bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
+      } else {
+        var names = [];
+        for (var i = 0; i < spaces.length; i++) {
+          var spaceId = spaces[i].id;
+          var spaceName = spaces[i].name;
+          var data = JSON.stringify([spaceId, spaceName]);
 
-        var integrationStr = '';
-        for (var i = 0; i < integrations.length; i++) {
-          integrationStr += i + 1 + '. ' + integrations[i].spaceName + '\n';
+          names.push([{ text: spaceName, callback_data: data }]);
         }
-        bot.sendMessage(chatId, integrationStr);
+
+        var _opts = {
+          reply_to_message_id: msg.message_id,
+          reply_markup: {
+            inline_keyboard: names
+          }
+        };
+        bot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE, _opts);
       }
     });
   };
 
   this.handleNewIntegration = function (chatId, msg) {
-    _mongo2.default.getChatById(chatId, function (err, chat) {
-      if (!err) {
-        var token = chat.token;
-
-        var opts = {
-          method: 'GET',
-          uri: 'https://api.assembla.com/v1/spaces',
-          auth: {
-            bearer: token.access_token
-          }
-        };
-        request(opts, function (error, response, spaces) {
-          spaces = JSON.parse(spaces);
-          if (spaces.error) {
-            console.log(spaces);
-            bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
-          } else {
-            var names = [];
-            for (var i = 0; i < spaces.length; i++) {
-              var spaceId = spaces[i].id;
-              var spaceName = spaces[i].name;
-              var data = JSON.stringify([spaceId, spaceName]);
-
-              names.push([{ text: spaceName, callback_data: data }]);
-            }
-
-            var _opts = {
-              reply_to_message_id: msg.message_id,
-              reply_markup: {
-                inline_keyboard: names
-              }
-            };
-            bot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE, _opts);
-          }
-        });
-      }
+    _models2.default.Chat.findOne({ where: { chatId: chatId } }).then(function (chat) {
+      console.log(chat.dataValues);
+      _this.fetchSpaces(chatId, msg, chat.dataValues);
     });
   };
-
-  this.handleDeleteIntegration = function () {};
 };
