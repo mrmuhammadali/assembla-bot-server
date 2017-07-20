@@ -24,6 +24,7 @@ export const DB_CONFIG_LOCAL = {
   options: {
     host: '127.0.0.1',
     port: '55335',
+    // port: '3306',
     dialect: 'mysql'
   }
 }
@@ -62,6 +63,7 @@ export const MESSAGE = {
   INVALID_TOKEN: `Access token is invalid or expired.`,
   SPACE_ALREADY_EXIST: "Space already integrated in this chat.",
   SPACE_INTEGRATED: " space integrated successfully.",
+  DATABASE_ERROR: "Process failed! Database is not working properly.",
   INTRODUCE_BOT: `I'm a Assembla bot. I'll send notifications of activities in a space.\n\nAvailable commands:
   /connect - Authorize bot via OAuth
   /newintegration - Add integration with a GitHub repository

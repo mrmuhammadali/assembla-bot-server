@@ -19,22 +19,46 @@ export class TelegramBot {
 
 export class BotOperations {
 
+  insertIntegration = (chatId, message_id, spaceId, spaceName) => {
+
+    const opts = {chat_id: chatId, message_id}
+
+    models.Integration.findOne({where: {chatId, spaceId}})
+      .then(res => {
+        console.log(res)
+        bot.editMessageText(utils.MESSAGE.SPACE_ALREADY_EXIST, opts);
+      })
+      .catch(err => {
+        models.Integration.create({spaceId, spaceName, chatId})
+          .then(res => {
+            bot.editMessageText(`"${spaceName}"` + utils.MESSAGE.SPACE_INTEGRATED, opts);
+          })
+          .catch(err => {
+            bot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
+          })
+      })
+
+  }
+
   handleCallbackQuery = (callbackQuery) => {
-    const data = JSON.parse(callbackQuery.data);
-    const space = {_id: data[0], spaceName: data[1]}
     const msg = callbackQuery.message;
     const chat_id = msg.chat.id
+    const data = JSON.parse(callbackQuery.data);
 
-    Chat.integrateSpaceInChat(chat_id, space, (err, res) => {
-      if (!err) {
-        const opts = {
-          chat_id,
-          message_id: msg.message_id,
-        };
+    this.insertIntegration(chat_id, msg.message_id, data[0], data[1])
 
-        bot.editMessageText(`"${space.spaceName}"` + utils.MESSAGE.SPACE_INTEGRATED, opts);
-      }
-    })
+    // const space = {_id: data[0], spaceName: data[1]}
+    //
+    // Chat.integrateSpaceInChat(chat_id, space, (err, res) => {
+    //   if (!err) {
+    //     const opts = {
+    //       chat_id,
+    //       message_id: msg.message_id,
+    //     };
+    //
+    //     bot.editMessageText(`"${space.spaceName}"` + utils.MESSAGE.SPACE_INTEGRATED, opts);
+    //   }
+    // })
   }
 
   handleCommands = (msg, command) => {
@@ -43,7 +67,7 @@ export class BotOperations {
     switch (command){
       case COMMANDS.START:
       case COMMANDS.HELP: {
-        bot.sendMessage(chatId, `${utils.MESSAGE.INTRODUCE_BOT}`);
+        bot.sendMessage(chatId, utils.MESSAGE.INTRODUCE_BOT);
         break;
       }
       case COMMANDS.CONNECT: {

@@ -67,22 +67,41 @@ exports.BotOperations = function BotOperations() {
 
   _classCallCheck(this, BotOperations);
 
+  this.insertIntegration = function (chatId, message_id, spaceId, spaceName) {
+
+    var opts = { chat_id: chatId, message_id: message_id };
+
+    _models2.default.Integration.findOne({ where: { chatId: chatId, spaceId: spaceId } }).then(function (res) {
+      console.log(res);
+      bot.editMessageText(utils.MESSAGE.SPACE_ALREADY_EXIST, opts);
+    }).catch(function (err) {
+      _models2.default.Integration.create({ spaceId: spaceId, spaceName: spaceName, chatId: chatId }).then(function (res) {
+        bot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_INTEGRATED, opts);
+      }).catch(function (err) {
+        bot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
+      });
+    });
+  };
+
   this.handleCallbackQuery = function (callbackQuery) {
-    var data = JSON.parse(callbackQuery.data);
-    var space = { _id: data[0], spaceName: data[1] };
     var msg = callbackQuery.message;
     var chat_id = msg.chat.id;
+    var data = JSON.parse(callbackQuery.data);
 
-    _mongo2.default.integrateSpaceInChat(chat_id, space, function (err, res) {
-      if (!err) {
-        var opts = {
-          chat_id: chat_id,
-          message_id: msg.message_id
-        };
+    _this.insertIntegration(chat_id, msg.message_id, data[0], data[1]);
 
-        bot.editMessageText('"' + space.spaceName + '"' + utils.MESSAGE.SPACE_INTEGRATED, opts);
-      }
-    });
+    // const space = {_id: data[0], spaceName: data[1]}
+    //
+    // Chat.integrateSpaceInChat(chat_id, space, (err, res) => {
+    //   if (!err) {
+    //     const opts = {
+    //       chat_id,
+    //       message_id: msg.message_id,
+    //     };
+    //
+    //     bot.editMessageText(`"${space.spaceName}"` + utils.MESSAGE.SPACE_INTEGRATED, opts);
+    //   }
+    // })
   };
 
   this.handleCommands = function (msg, command) {
@@ -92,7 +111,7 @@ exports.BotOperations = function BotOperations() {
       case COMMANDS.START:
       case COMMANDS.HELP:
         {
-          bot.sendMessage(chatId, '' + utils.MESSAGE.INTRODUCE_BOT);
+          bot.sendMessage(chatId, utils.MESSAGE.INTRODUCE_BOT);
           break;
         }
       case COMMANDS.CONNECT:
