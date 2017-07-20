@@ -27,7 +27,7 @@ var DB_CONFIG_LOCAL = exports.DB_CONFIG_LOCAL = {
   user: 'azure',
   password: '6#vWHD_$',
   options: {
-    host: 'localhost',
+    host: '127.0.0.1:55335',
     dialect: 'mysql'
   }
 };
