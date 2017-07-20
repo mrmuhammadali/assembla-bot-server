@@ -19,8 +19,8 @@ export const DB_CONFIG = {
 }
 export const DB_CONFIG_LOCAL = {
   name: 'assembla',
-  user: 'assembla',
-  password: 'assembla',
+  user: 'azure',
+  password: '6#vWHD_$',
   options: {
     host: 'localhost',
     dialect: 'mysql'

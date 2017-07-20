@@ -24,8 +24,8 @@ var DB_CONFIG = exports.DB_CONFIG = {
 };
 var DB_CONFIG_LOCAL = exports.DB_CONFIG_LOCAL = {
   name: 'assembla',
-  user: 'assembla',
-  password: 'assembla',
+  user: 'azure',
+  password: '6#vWHD_$',
   options: {
     host: 'localhost',
     dialect: 'mysql'
