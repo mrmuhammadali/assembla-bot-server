@@ -23,7 +23,7 @@ var DB_CONFIG = exports.DB_CONFIG = {
   }
 };
 var DB_CONFIG_LOCAL = exports.DB_CONFIG_LOCAL = {
-  name: 'assembla',
+  name: 'localdb',
   user: 'azure',
   password: '6#vWHD_$',
   options: {
