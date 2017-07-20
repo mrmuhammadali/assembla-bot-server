@@ -18,7 +18,7 @@ export const DB_CONFIG = {
   }
 }
 export const DB_CONFIG_LOCAL = {
-  name: 'assembla',
+  name: 'localdb',
   user: 'azure',
   password: '6#vWHD_$',
   options: {
