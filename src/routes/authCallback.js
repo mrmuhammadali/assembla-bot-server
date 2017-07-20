@@ -25,7 +25,7 @@ export default router.get('', (req, res) => {
 
     console.log("Token: ", token)
     console.log("ChatId: ", chatId)
-    const {access_token, refresh_token} = token
+    const {access_token, refresh_token} = token.token
     const chat = {chatId, access_token, refresh_token}
     models.Chat.create(chat)
       .then(res => {

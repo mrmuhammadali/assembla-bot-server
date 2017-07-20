@@ -44,8 +44,9 @@ exports.default = router.get('', function (req, res) {
 
     console.log("Token: ", token);
     console.log("ChatId: ", chatId);
-    var access_token = token.access_token,
-        refresh_token = token.refresh_token;
+    var _token$token = token.token,
+        access_token = _token$token.access_token,
+        refresh_token = _token$token.refresh_token;
 
     var chat = { chatId: chatId, access_token: access_token, refresh_token: refresh_token };
     _models2.default.Chat.create(chat).then(function (res) {
