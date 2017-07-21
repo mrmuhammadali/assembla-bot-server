@@ -63,18 +63,17 @@ var date = new Date();
 setInterval(function () {
   _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (res) {
     if (res !== null) {
-      var dateStr = date.getFullYear() + '-' + date.getUTCMonth() + '-' + date.getUTCDate() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes();
       for (var i = 0; i < res.length; i++) {
         var integration = res[i].dataValues;
         var chat = integration.chat.dataValues;
 
-        new _TelegramBot.BotOperations().fetchActivity(chat.chatId, integration.spaceId, dateStr, chat.access_token);
+        new _TelegramBot.BotOperations().fetchActivity(chat.chatId, integration.spaceId, date, chat.access_token);
+        date = new Date();
         console.log("Data " + i + ": ", integration.spaceId);
       }
     }
-    date = new Date();
   });
-}, 30000);
+}, 60000);
 
 // token.token.access_token
 // /spaces/cTOCMCa_4r57Jddmr6CpXy

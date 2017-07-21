@@ -209,26 +209,40 @@ export class BotOperations {
       })
   }
 
+  appendZero = (num) => {
+    if (num < 10) {
+      return `0${num}`
+    }
+    return num
+  }
+
   fetchActivity = (chatId, spaceId, date, access_token) => {
+    let dateStr = `${date.getFullYear()}-${this.appendZero((date.getMonth() + 1))}-`
+    dateStr += `${this.appendZero(date.getUTCDate())} ${this.appendZero(date.getUTCHours())}:${this.appendZero(date.getUTCMinutes())}`
+    console.log(dateStr)
     const opts = {
       method: 'GET',
-      uri: `https://api.assembla.com/v1/activity.json?space_id=${spaceId}&from=${date}`,
+      uri: `https://api.assembla.com/v1/activity.json?space_id=${spaceId}&from=${dateStr}`,
       auth: {
         bearer: access_token
       }
     }
     request(opts, (error, response, activity) => {
-      activity = JSON.parse(activity)
-      if (activity.error) {
-        console.log(activity)
-        bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
-      } else {
-        console.log(activity)
-        for (let i = 0; i < activity.length; i++) {
-          const {author_name, space_name, operation, title, object} = activity[i]
-          const str = `${object}:\n${author_name} ${operation} '${title}' in Space '${space_name}'`
-          bot.sendMessage(chatId, str);
+      try {
+        activity = JSON.parse(activity)
+        if (activity.error) {
+          console.log(activity)
+          bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
+        } else {
+          for (let i = 0; i < activity.length; i++) {
+            const {date, author_name, space_name, operation, title, object} = activity[i]
+            const str = `${object}: ${date}\n${author_name} ${operation} '${title}' in Space '${space_name}'`
+            bot.sendMessage(chatId, str);
+          }
         }
+      }
+      catch (e) {
+
       }
     });
   }

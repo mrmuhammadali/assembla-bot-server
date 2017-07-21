@@ -259,33 +259,45 @@ exports.BotOperations = function BotOperations() {
     });
   };
 
+  this.appendZero = function (num) {
+    if (num < 10) {
+      return '0' + num;
+    }
+    return num;
+  };
+
   this.fetchActivity = function (chatId, spaceId, date, access_token) {
+    var dateStr = date.getFullYear() + '-' + _this.appendZero(date.getMonth() + 1) + '-';
+    dateStr += _this.appendZero(date.getUTCDate()) + ' ' + _this.appendZero(date.getUTCHours()) + ':' + _this.appendZero(date.getUTCMinutes());
+    console.log(dateStr);
     var opts = {
       method: 'GET',
-      uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + date,
+      uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + dateStr,
       auth: {
         bearer: access_token
       }
     };
     request(opts, function (error, response, activity) {
-      activity = JSON.parse(activity);
-      if (activity.error) {
-        console.log(activity);
-        bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
-      } else {
-        console.log(activity);
-        for (var i = 0; i < activity.length; i++) {
-          var _activity$i = activity[i],
-              author_name = _activity$i.author_name,
-              space_name = _activity$i.space_name,
-              operation = _activity$i.operation,
-              title = _activity$i.title,
-              object = _activity$i.object;
+      try {
+        activity = JSON.parse(activity);
+        if (activity.error) {
+          console.log(activity);
+          bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
+        } else {
+          for (var i = 0; i < activity.length; i++) {
+            var _activity$i = activity[i],
+                _date = _activity$i.date,
+                author_name = _activity$i.author_name,
+                space_name = _activity$i.space_name,
+                operation = _activity$i.operation,
+                title = _activity$i.title,
+                object = _activity$i.object;
 
-          var str = object + ':\n' + author_name + ' ' + operation + ' \'' + title + '\' in Space \'' + space_name + '\'';
-          bot.sendMessage(chatId, str);
+            var str = object + ': ' + _date + '\n' + author_name + ' ' + operation + ' \'' + title + '\' in Space \'' + space_name + '\'';
+            bot.sendMessage(chatId, str);
+          }
         }
-      }
+      } catch (e) {}
     });
   };
 };

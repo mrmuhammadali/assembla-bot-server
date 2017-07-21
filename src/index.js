@@ -53,18 +53,17 @@ setInterval(() => {
   models.Integration.findAll({ include: [models.Chat]})
     .then(res => {
       if (res !== null) {
-        const dateStr = `${date.getFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}`
         for (let i = 0; i < res.length; i++) {
           const integration = res[i].dataValues
           const chat = integration.chat.dataValues
 
-          new BotOperations().fetchActivity(chat.chatId, integration.spaceId, dateStr, chat.access_token)
+          new BotOperations().fetchActivity(chat.chatId, integration.spaceId, date, chat.access_token)
+          date = new Date()
           console.log("Data "+i+": ", integration.spaceId)
         }
       }
-      date = new Date()
     })
-}, 30000)
+}, 60000)
 
 // token.token.access_token
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
