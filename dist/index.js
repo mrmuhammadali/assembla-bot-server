@@ -8,6 +8,10 @@ var _services = require('./services');
 
 var _services2 = _interopRequireDefault(_services);
 
+var _models = require('./models');
+
+var _models2 = _interopRequireDefault(_models);
+
 var _TelegramBot = require('./TelegramBot');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -54,24 +58,26 @@ bot.on('callback_query', function (callbackQuery) {
   new _TelegramBot.BotOperations().handleCallbackQuery(callbackQuery);
 });
 
+var date = new Date();
+
+setInterval(function () {
+  _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (res) {
+    if (res !== null) {
+      var dateStr = date.getFullYear() + '-' + date.getUTCMonth() + '-' + date.getUTCDate() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes();
+      for (var i = 0; i < res.length; i++) {
+        var integration = res[i].dataValues;
+        var chat = integration.chat.dataValues;
+
+        new _TelegramBot.BotOperations().fetchActivity(chat.chatId, integration.spaceId, dateStr, chat.access_token);
+        console.log("Data " + i + ": ", integration.spaceId);
+      }
+    }
+    date = new Date();
+  });
+}, 30000);
+
 // token.token.access_token
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
-app.get('/spaces', function (req, res) {
-  var space_id = req.query.space_id;
-
-  request({
-    method: 'GET',
-    uri: 'https://api.assembla.com/v1/activity.json?space_id=' + space_id,
-    auth: {
-      bearer: 'b68c758499f479102aa6a81f478237e3'
-    }
-  }, function (error, response, body) {
-    //this contains a json object of all the user's spaces
-    console.log("Response Body(Assembla): ", body);
-    console.log(req.query);
-    res.send(body);
-  });
-});
 
 app.listen(process.env.PORT || 3030, function () {
   console.log('Assembla Bot Server started at port: ' + (process.env.PORT || 3030));

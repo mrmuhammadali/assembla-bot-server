@@ -1,6 +1,7 @@
 export const ASSEMBLA_URL = 'https://api.assembla.com'
 export const BASE_URL = 'https://assembla-bot-server.herokuapp.com';
 export const TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72ZbYx2u4gTLAWU'
+// export const TELEGRAM_TOKEN = '407191495:AAFvFL2_KtFmo7QlcPzV7bJR-14YYBxTbXo'
 export const TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot'
 
 export const DB_CONFIG = {
@@ -54,7 +55,8 @@ export const COMMANDS = {
 export const MESSAGE = {
   COMMAND_NOT_FOUND: 'Command not found!',
   CONNECT: `Open this link to authorize the bot:\n`,
-  CHOOSE_SAPCE: `Please choose a Space you'd like to receive notifications from:`,
+  CHOOSE_SAPCE_INTEGRATE: `Please choose a Space you'd like to receive notifications from:\n`,
+  CHOOSE_SAPCE_DELETE: `Please choose a Space you'd like to delete from this chat:\n`,
   ACCESS_TOKEN_ERROR: 'Access Token Error: ',
   AUTHORIZATION_SUCCESSFUL: `Your Assembla account was connected successfully!\nYou can now use the /newintegration command.`,
   AUTHORIZATION_FAILED: `Authorization failed!\n\nUse /connect to authorize bot via OAuth.`,
@@ -63,7 +65,9 @@ export const MESSAGE = {
   INVALID_TOKEN: `Access token is invalid or expired.`,
   SPACE_ALREADY_EXIST: "Space already integrated in this chat.",
   SPACE_INTEGRATED: " space integrated successfully.",
-  DATABASE_ERROR: "Process failed! Database is not working properly.",
+  SPACE_DELETED: " space deleted from this chat.",
+  LIST_INTEGRATION:'Following spaces are integrated:\n',
+  DATABASE_ERROR: "Process failed! Try again later.",
   INTRODUCE_BOT: `I'm a Assembla bot. I'll send notifications of activities in a space.\n\nAvailable commands:
   /connect - Authorize bot via OAuth
   /newintegration - Add integration with a GitHub repository

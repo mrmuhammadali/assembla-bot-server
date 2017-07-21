@@ -17,6 +17,8 @@ models.forEach(function (model) {
 // describe relationships
 (function (m) {
   m.Chat.hasMany(m.Integration, { foreignKey: 'chatId' });
+  m.Integration.belongsTo(m.Chat, { foreignKey: 'chatId' });
+
   sequelize.authenticate().then(function () {
     console.log('Connection has been established successfully.');
   }).catch(function (err) {

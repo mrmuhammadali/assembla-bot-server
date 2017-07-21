@@ -72,23 +72,53 @@ exports.BotOperations = function BotOperations() {
     var opts = { chat_id: chatId, message_id: message_id };
 
     _models2.default.Integration.findOne({ where: { chatId: chatId, spaceId: spaceId } }).then(function (res) {
-      console.log(res);
-      bot.editMessageText(utils.MESSAGE.SPACE_ALREADY_EXIST, opts);
-    }).catch(function (err) {
-      _models2.default.Integration.create({ spaceId: spaceId, spaceName: spaceName, chatId: chatId }).then(function (res) {
-        bot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_INTEGRATED, opts);
-      }).catch(function (err) {
+      if (res === null) {
+        _models2.default.Integration.create({ spaceId: spaceId, spaceName: spaceName, chatId: chatId }).then(function (res) {
+          bot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_INTEGRATED, opts);
+          return;
+        }).catch(function (err) {
+          bot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
+        });
+      } else {
+        bot.editMessageText(utils.MESSAGE.SPACE_ALREADY_EXIST, opts);
+      }
+    });
+  };
+
+  this.deleteIntegration = function (chatId, message_id, spaceId, spaceName) {
+    var opts = { chat_id: chatId, message_id: message_id };
+
+    _models2.default.Integration.destroy({ where: { chatId: chatId, spaceId: spaceId } }).then(function (res) {
+      if (res >= 1) {
+        bot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_DELETED, opts);
+      } else {
         bot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
-      });
+      }
+    }).catch(function (err) {
+      bot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
     });
   };
 
   this.handleCallbackQuery = function (callbackQuery) {
     var msg = callbackQuery.message;
+    var action = msg.reply_to_message.text.substr(1);
     var chat_id = msg.chat.id;
     var data = JSON.parse(callbackQuery.data);
+    var spaceId = data[0];
+    var spaceName = data[1];
 
-    _this.insertIntegration(chat_id, msg.message_id, data[0], data[1]);
+    switch (action) {
+      case utils.COMMANDS.NEW_INTEGRATION:
+        {
+          _this.insertIntegration(chat_id, msg.message_id, spaceId, spaceName);
+          break;
+        }
+      case utils.COMMANDS.DELETE_INTEGRATION:
+        {
+          _this.deleteIntegration(chat_id, msg.message_id, spaceId, spaceName);
+          break;
+        }
+    }
 
     // const space = {_id: data[0], spaceName: data[1]}
     //
@@ -126,12 +156,12 @@ exports.BotOperations = function BotOperations() {
         }
       case COMMANDS.LIST_INTEGRATION:
         {
-          _this.handleListIntegrations(chatId);
+          _this.handleListIntegrations(chatId, msg.message_id);
           break;
         }
       case COMMANDS.DELETE_INTEGRATION:
         {
-          _this.handleDeleteIntegration();
+          _this.handleDeleteIntegration(chatId, msg.message_id);
           break;
         }
       default:
@@ -179,7 +209,7 @@ exports.BotOperations = function BotOperations() {
             inline_keyboard: names
           }
         };
-        bot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE, _opts);
+        bot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, _opts);
       }
     });
   };
@@ -188,6 +218,64 @@ exports.BotOperations = function BotOperations() {
     _models2.default.Chat.findOne({ where: { chatId: chatId } }).then(function (chat) {
       console.log(chat.dataValues);
       _this.fetchSpaces(chatId, msg, chat.dataValues);
+    });
+  };
+
+  this.handleListIntegrations = function (chatId, messageId) {
+    _models2.default.Integration.findAll({ where: { chatId: chatId } }).then(function (integrations) {
+      if (integrations !== null) {
+        var integrationStr = '';
+        for (var i = 0; i < integrations.length; i++) {
+          console.log(integrations[i].dataValues.spaceName);
+          integrationStr += i + 1 + '. ' + integrations[i].dataValues.spaceName + '\n';
+        }
+        bot.sendMessage(chatId, utils.MESSAGE.LIST_INTEGRATION + integrationStr, { reply_to_message_id: messageId });
+      }
+    });
+  };
+
+  this.handleDeleteIntegration = function (chatId, messageId) {
+    _models2.default.Integration.findAll({ where: { chatId: chatId } }).then(function (integrations) {
+      if (integrations !== null) {
+        var names = [];
+        for (var i = 0; i < integrations.length; i++) {
+          var _integrations$i$dataV = integrations[i].dataValues,
+              spaceId = _integrations$i$dataV.spaceId,
+              spaceName = _integrations$i$dataV.spaceName;
+
+          var data = JSON.stringify([spaceId, spaceName]);
+
+          names.push([{ text: spaceName, callback_data: data }]);
+        }
+
+        var opts = {
+          reply_to_message_id: messageId,
+          reply_markup: {
+            inline_keyboard: names
+          }
+        };
+        bot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_DELETE, opts);
+      }
+    });
+  };
+
+  this.fetchActivity = function (chatId, spaceId, date, access_token) {
+    var opts = {
+      method: 'GET',
+      uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId,
+      auth: {
+        bearer: access_token
+      }
+    };
+    request(opts, function (error, response, activity) {
+      activity = JSON.parse(activity);
+      if (activity.error) {
+        console.log(activity);
+        bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
+      } else {
+        console.log(activity);
+        //bot.sendMessage(chatId, "Activity");
+      }
     });
   };
 };

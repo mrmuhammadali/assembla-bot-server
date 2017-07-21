@@ -8,10 +8,10 @@ const socketio = require('feathers-socketio');
 const socketioClient = require('feathers-socketio/client')
 
 import * as routes from './routes'
-
 import services from './services'
-
+import models from './models'
 import {TelegramBot, BotOperations} from './TelegramBot'
+
 const mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
 
 const app = feathers()
@@ -47,24 +47,27 @@ bot.on('callback_query',  (callbackQuery) => {
   new BotOperations().handleCallbackQuery(callbackQuery)
 });
 
+let date = new Date()
+
+setInterval(() => {
+  models.Integration.findAll({ include: [models.Chat]})
+    .then(res => {
+      if (res !== null) {
+        const dateStr = `${date.getFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}`
+        for (let i = 0; i < res.length; i++) {
+          const integration = res[i].dataValues
+          const chat = integration.chat.dataValues
+
+          new BotOperations().fetchActivity(chat.chatId, integration.spaceId, dateStr, chat.access_token)
+          console.log("Data "+i+": ", integration.spaceId)
+        }
+      }
+      date = new Date()
+    })
+}, 30000)
+
 // token.token.access_token
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
-app.get('/spaces', (req, res) => {
-  const { space_id } = req.query
-  request({
-    method: 'GET',
-    uri: `https://api.assembla.com/v1/activity.json?space_id=${space_id}`,
-    auth: {
-      bearer: 'b68c758499f479102aa6a81f478237e3'
-    }
-  }, (error, response, body) => {
-    //this contains a json object of all the user's spaces
-    console.log("Response Body(Assembla): ", body)
-    console.log(req.query)
-    res.send(body)
-  });
-
-})
 
 app.listen(process.env.PORT || 3030, () => {
   console.log(`Assembla Bot Server started at port: ${process.env.PORT || 3030}`);
