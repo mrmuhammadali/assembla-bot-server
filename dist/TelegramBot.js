@@ -262,7 +262,7 @@ exports.BotOperations = function BotOperations() {
   this.fetchActivity = function (chatId, spaceId, date, access_token) {
     var opts = {
       method: 'GET',
-      uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId,
+      uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + date,
       auth: {
         bearer: access_token
       }
@@ -274,7 +274,17 @@ exports.BotOperations = function BotOperations() {
         bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
       } else {
         console.log(activity);
-        //bot.sendMessage(chatId, "Activity");
+        for (var i = 0; i < activity.length; i++) {
+          var _activity$i = activity[i],
+              author_name = _activity$i.author_name,
+              space_name = _activity$i.space_name,
+              operation = _activity$i.operation,
+              title = _activity$i.title,
+              object = _activity$i.object;
+
+          var str = object + ':\n' + author_name + ' ' + operation + ' \'' + title + '\' in Space \'' + space_name + '\'';
+          bot.sendMessage(chatId, str);
+        }
       }
     });
   };

@@ -212,7 +212,7 @@ export class BotOperations {
   fetchActivity = (chatId, spaceId, date, access_token) => {
     const opts = {
       method: 'GET',
-      uri: `https://api.assembla.com/v1/activity.json?space_id=${spaceId}`,
+      uri: `https://api.assembla.com/v1/activity.json?space_id=${spaceId}&from=${date}`,
       auth: {
         bearer: access_token
       }
@@ -224,7 +224,11 @@ export class BotOperations {
         bot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
       } else {
         console.log(activity)
-        //bot.sendMessage(chatId, "Activity");
+        for (let i = 0; i < activity.length; i++) {
+          const {author_name, space_name, operation, title, object} = activity[i]
+          const str = `${object}:\n${author_name} ${operation} '${title}' in Space '${space_name}'`
+          bot.sendMessage(chatId, str);
+        }
       }
     });
   }
