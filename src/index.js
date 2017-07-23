@@ -1,3 +1,5 @@
+import {ASSEMBLA_CREDENTIALS} from "./utils"
+
 const bodyParser = require('body-parser');
 const feathers = require('feathers');
 const featherClient = require('feathers/client')
@@ -6,6 +8,7 @@ const mongoose = require('mongoose')
 const request = require('request');
 const socketio = require('feathers-socketio');
 const socketioClient = require('feathers-socketio/client')
+const oauth2 = require('simple-oauth2').create(ASSEMBLA_CREDENTIALS)
 
 import * as routes from './routes'
 import services from './services'
@@ -39,12 +42,13 @@ const app = feathers()
 //   console.log("Connected to database")
 // })
 const bot = new TelegramBot()
+const botOperations = new BotOperations()
 bot.onText(/\/(.+)/, (msg, match) => {
-  new BotOperations().handleCommands(msg, match[1])
+  botOperations.handleCommands(msg, match[1])
 });
 
 bot.on('callback_query',  (callbackQuery) => {
-  new BotOperations().handleCallbackQuery(callbackQuery)
+  botOperations.handleCallbackQuery(callbackQuery)
 });
 
 let date = new Date()
@@ -56,8 +60,17 @@ setInterval(() => {
         for (let i = 0; i < res.length; i++) {
           const integration = res[i].dataValues
           const chat = integration.chat.dataValues
+          const {chatId, access_token, refresh_token, expires_in} = chat
+          let token = oauth2.accessToken.create({access_token, refresh_token, expires_in})
+          if (token.expired()) {
+            token.refresh()
+              .then((result) => {
+                token = result;
+                models.Chat.update({ ...token }, { where: { chatId } })
+              });
+          }
+          botOperations.fetchActivity(chatId, integration.spaceId, date, token)
 
-          new BotOperations().fetchActivity(chat.chatId, integration.spaceId, date, chat.access_token)
           date = new Date()
           console.log("Data "+i+": ", integration.spaceId)
         }

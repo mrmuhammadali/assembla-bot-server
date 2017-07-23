@@ -1,5 +1,9 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _utils = require('./utils');
+
 var _routes = require('./routes');
 
 var routes = _interopRequireWildcard(_routes);
@@ -26,6 +30,7 @@ var mongoose = require('mongoose');
 var request = require('request');
 var socketio = require('feathers-socketio');
 var socketioClient = require('feathers-socketio/client');
+var oauth2 = require('simple-oauth2').create(_utils.ASSEMBLA_CREDENTIALS);
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
 
@@ -50,12 +55,13 @@ var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback
 //   console.log("Connected to database")
 // })
 var bot = new _TelegramBot.TelegramBot();
+var botOperations = new _TelegramBot.BotOperations();
 bot.onText(/\/(.+)/, function (msg, match) {
-  new _TelegramBot.BotOperations().handleCommands(msg, match[1]);
+  botOperations.handleCommands(msg, match[1]);
 });
 
 bot.on('callback_query', function (callbackQuery) {
-  new _TelegramBot.BotOperations().handleCallbackQuery(callbackQuery);
+  botOperations.handleCallbackQuery(callbackQuery);
 });
 
 var date = new Date();
@@ -63,13 +69,29 @@ var date = new Date();
 setInterval(function () {
   _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (res) {
     if (res !== null) {
-      for (var i = 0; i < res.length; i++) {
+      var _loop = function _loop(i) {
         var integration = res[i].dataValues;
         var chat = integration.chat.dataValues;
+        var chatId = chat.chatId,
+            access_token = chat.access_token,
+            refresh_token = chat.refresh_token,
+            expires_in = chat.expires_in;
 
-        new _TelegramBot.BotOperations().fetchActivity(chat.chatId, integration.spaceId, date, chat.access_token);
+        var token = oauth2.accessToken.create({ access_token: access_token, refresh_token: refresh_token, expires_in: expires_in });
+        if (token.expired()) {
+          token.refresh().then(function (result) {
+            token = result;
+            _models2.default.Chat.update(_extends({}, token), { where: { chatId: chatId } });
+          });
+        }
+        botOperations.fetchActivity(chatId, integration.spaceId, date, token);
+
         date = new Date();
         console.log("Data " + i + ": ", integration.spaceId);
+      };
+
+      for (var i = 0; i < res.length; i++) {
+        _loop(i);
       }
     }
   });

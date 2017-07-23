@@ -266,7 +266,16 @@ exports.BotOperations = function BotOperations() {
     return num;
   };
 
-  this.fetchActivity = function (chatId, spaceId, date, access_token) {
+  this.refreshToken = function (chatId, token) {
+    token = oauth2.accessToken.create(token);
+    if (token.expired()) {
+      token.refresh().then(function (result) {
+        token = result;
+      });
+    }
+  };
+
+  this.fetchActivity = function (chatId, spaceId, date, token) {
     var dateStr = date.getFullYear() + '-' + _this.appendZero(date.getMonth() + 1) + '-';
     dateStr += _this.appendZero(date.getUTCDate()) + ' ' + _this.appendZero(date.getUTCHours()) + ':' + _this.appendZero(date.getUTCMinutes());
     console.log(dateStr);
@@ -274,7 +283,7 @@ exports.BotOperations = function BotOperations() {
       method: 'GET',
       uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + dateStr,
       auth: {
-        bearer: access_token
+        bearer: token.access_token
       }
     };
     request(opts, function (error, response, activity) {

@@ -46,13 +46,14 @@ exports.default = router.get('', function (req, res) {
     console.log("ChatId: ", chatId);
     var _token$token = token.token,
         access_token = _token$token.access_token,
-        refresh_token = _token$token.refresh_token;
+        refresh_token = _token$token.refresh_token,
+        expires_in = _token$token.expires_in;
 
-    var chat = { chatId: chatId, access_token: access_token, refresh_token: refresh_token };
+    var chat = { chatId: chatId, access_token: access_token, refresh_token: refresh_token, expires_in: expires_in };
     _models2.default.Chat.create(chat).then(function (res) {
       bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
     }).catch(function (err) {
-      _models2.default.Chat.update({ access_token: access_token, refresh_token: refresh_token }, { where: { chatId: chatId } }).then(function (result) {
+      _models2.default.Chat.update({ access_token: access_token, refresh_token: refresh_token, expires_in: expires_in }, { where: { chatId: chatId } }).then(function (result) {
         bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
       }).catch(function (err) {
         bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_FAILED);

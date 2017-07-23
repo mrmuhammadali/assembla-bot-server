@@ -25,14 +25,14 @@ export default router.get('', (req, res) => {
 
     console.log("Token: ", token)
     console.log("ChatId: ", chatId)
-    const {access_token, refresh_token} = token.token
-    const chat = {chatId, access_token, refresh_token}
+    const {access_token, refresh_token, expires_in} = token.token
+    const chat = {chatId, access_token, refresh_token, expires_in}
     models.Chat.create(chat)
       .then(res => {
         bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
       })
       .catch(err => {
-        models.Chat.update({ access_token, refresh_token }, { where: { chatId } })
+        models.Chat.update({ access_token, refresh_token, expires_in }, { where: { chatId } })
           .then(result => {
             bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
           })

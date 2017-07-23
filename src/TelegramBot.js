@@ -216,7 +216,17 @@ export class BotOperations {
     return num
   }
 
-  fetchActivity = (chatId, spaceId, date, access_token) => {
+  refreshToken = (chatId, token) => {
+    token = oauth2.accessToken.create(token)
+    if (token.expired()) {
+      token.refresh()
+        .then((result) => {
+          token = result;
+        });
+    }
+  }
+
+  fetchActivity = (chatId, spaceId, date, token) => {
     let dateStr = `${date.getFullYear()}-${this.appendZero((date.getMonth() + 1))}-`
     dateStr += `${this.appendZero(date.getUTCDate())} ${this.appendZero(date.getUTCHours())}:${this.appendZero(date.getUTCMinutes())}`
     console.log(dateStr)
@@ -224,7 +234,7 @@ export class BotOperations {
       method: 'GET',
       uri: `https://api.assembla.com/v1/activity.json?space_id=${spaceId}&from=${dateStr}`,
       auth: {
-        bearer: access_token
+        bearer: token.access_token
       }
     }
     request(opts, (error, response, activity) => {
