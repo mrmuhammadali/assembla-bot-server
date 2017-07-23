@@ -4,11 +4,11 @@ var _utils = require('../utils');
 
 var Sequelize = require('sequelize');
 
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
+var uriPostgres = process.env.DATABASE_URL || process.env.HEROKU_POSTGRESQL_ANIMATED_URL || 'postgres://tqrldekflsrwxc:621a00e80cc61917d3b261dd9f9aa39c819793a0634038b2099053fe4ebb57d3@ec2-46-137-97-169.eu-west-1.compute.amazonaws.com:5432/dfkcg96lgv1ob0';
 
 // const DB_CONFIG = DB_CONFIG_LOCAL
-console.log("Connection String: ", mongoUri);
-var sequelize = new Sequelize(mongoUri);
+console.log("Connection String: ", uriPostgres);
+var sequelize = new Sequelize(uriPostgres);
 // const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options)
 
 var models = ['Chat', 'Integration'];
