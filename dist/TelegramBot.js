@@ -278,7 +278,7 @@ exports.BotOperations = function BotOperations() {
   this.fetchActivity = function (chatId, spaceId, date, token) {
     var dateStr = date.getFullYear() + '-' + _this.appendZero(date.getMonth() + 1) + '-';
     dateStr += _this.appendZero(date.getUTCDate()) + ' ' + _this.appendZero(date.getUTCHours()) + ':' + _this.appendZero(date.getUTCMinutes());
-    console.log(dateStr);
+    console.log("Token: ", token);
     var opts = {
       method: 'GET',
       uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + dateStr,
