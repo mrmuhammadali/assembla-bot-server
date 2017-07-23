@@ -287,6 +287,7 @@ exports.BotOperations = function BotOperations() {
       }
     };
     request(opts, function (error, response, activity) {
+      console.log("Request Error: ", error);
       try {
         activity = JSON.parse(activity);
         if (activity.error) {

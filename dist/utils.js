@@ -29,8 +29,8 @@ var DB_CONFIG_LOCAL = exports.DB_CONFIG_LOCAL = {
   password: '6#vWHD_$',
   options: {
     host: '127.0.0.1',
-    port: '55335',
-    // port: '3306',
+    // port: '55335',
+    port: '3306',
     dialect: 'mysql'
   }
 };

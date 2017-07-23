@@ -1,7 +1,5 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _utils = require('./utils');
 
 var _routes = require('./routes');
@@ -21,6 +19,8 @@ var _TelegramBot = require('./TelegramBot');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var bodyParser = require('body-parser');
 var feathers = require('feathers');
@@ -73,16 +73,20 @@ setInterval(function () {
         var chatId = chat.chatId,
             access_token = chat.access_token,
             refresh_token = chat.refresh_token,
-            expires_in = chat.expires_in;
+            expires_in = chat.expires_in,
+            expires_at = chat.expires_at;
 
-        var token = oauth2.accessToken.create({ access_token: access_token, refresh_token: refresh_token, expires_in: expires_in });
+        var token = oauth2.accessToken.create({ access_token: access_token, refresh_token: refresh_token, expires_in: expires_in, expires_at: expires_at });
         if (token.expired()) {
+          console.log("Expired!!!!!!");
           token.refresh().then(function (result) {
+            var _models$Chat;
+
             token = result;
-            _models2.default.Chat.update(_extends({}, token), { where: { chatId: chatId } });
+            (_models$Chat = _models2.default.Chat).update.apply(_models$Chat, _toConsumableArray(token).concat([{ where: { chatId: chatId } }]));
           });
         }
-        botOperations.fetchActivity(chatId, integration.spaceId, date, token);
+        botOperations.fetchActivity.apply(botOperations, [chatId, integration.spaceId, date].concat(_toConsumableArray(token)));
 
         date = new Date();
         console.log("Data " + i + ": ", integration.spaceId);

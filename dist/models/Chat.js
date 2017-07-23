@@ -8,7 +8,8 @@ module.exports = function (sequelize, DataTypes) {
     },
     access_token: DataTypes.STRING,
     refresh_token: DataTypes.STRING,
-    expires_in: DataTypes.INTEGER
+    expires_in: DataTypes.INTEGER,
+    expires_at: DataTypes.DATE
   }, {
     timestamps: false
   });
