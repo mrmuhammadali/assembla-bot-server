@@ -1,13 +1,15 @@
-"use strict";
+'use strict';
 
-var _utils = require("../utils");
+var _utils = require('../utils');
 
 var Sequelize = require('sequelize');
 
-var DB_CONFIG = _utils.DB_CONFIG_LOCAL;
-console.log("Connection String: ", process.env.MYSQLCONNSTR_localdb);
-// const sequelize = new Sequelize(process.env.MYSQLCONNSTR_localdb)
-var sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options);
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
+
+// const DB_CONFIG = DB_CONFIG_LOCAL
+console.log("Connection String: ", mongoUri);
+var sequelize = new Sequelize(mongoUri);
+// const sequelize = new Sequelize(DB_CONFIG.name, DB_CONFIG.user, DB_CONFIG.password, DB_CONFIG.options)
 
 var models = ['Chat', 'Integration'];
 models.forEach(function (model) {
@@ -24,7 +26,7 @@ models.forEach(function (model) {
   }).catch(function (err) {
     console.error('Unable to connect to the database:', err);
   });
-  sequelize.sync({ force: true }).then(function () {
+  sequelize.sync().then(function () {
     console.log("Successfully synced!!!");
   });
 })(module.exports);

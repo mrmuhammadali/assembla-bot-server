@@ -10,11 +10,11 @@ var TELEGRAM_TOKEN = exports.TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72Z
 var TELEGRAM_BOT_URL = exports.TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot/';
 
 var DB_CONFIG = exports.DB_CONFIG = {
-  name: 'd4mvs46suu2upa',
-  user: 'wepcrlefgqfwky',
-  password: '04bb6a1889990a139030ac0bcff1c9c4ca1501b5a90c5451c8f4b2fb4ff9927c',
+  name: 'dfkcg96lgv1ob0',
+  user: 'tqrldekflsrwxc',
+  password: '621a00e80cc61917d3b261dd9f9aa39c819793a0634038b2099053fe4ebb57d3',
   options: {
-    host: 'ec2-107-20-250-195.compute-1.amazonaws.com',
+    host: 'ec2-46-137-97-169.eu-west-1.compute.amazonaws.com',
     port: '5432',
     dialect: 'postgres',
     protocol: 'postgres',

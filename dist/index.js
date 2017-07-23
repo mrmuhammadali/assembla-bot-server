@@ -32,8 +32,6 @@ var socketio = require('feathers-socketio');
 var socketioClient = require('feathers-socketio/client');
 var oauth2 = require('simple-oauth2').create(_utils.ASSEMBLA_CREDENTIALS);
 
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/assemblaDb';
-
 var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
 
 // const socket = io('http://localhost:3000/');
