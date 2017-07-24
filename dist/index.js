@@ -77,7 +77,7 @@ setInterval(function () {
       }
     }
   });
-}, 60000);
+}, 90000);
 
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
 
