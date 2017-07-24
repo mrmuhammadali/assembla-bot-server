@@ -5,8 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 var ASSEMBLA_URL = exports.ASSEMBLA_URL = 'https://api.assembla.com';
 var BASE_URL = exports.BASE_URL = 'https://assembla-bot-server.herokuapp.com';
-var TELEGRAM_TOKEN = exports.TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72ZbYx2u4gTLAWU';
-// export const TELEGRAM_TOKEN = '407191495:AAFvFL2_KtFmo7QlcPzV7bJR-14YYBxTbXo'
+// export const TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72ZbYx2u4gTLAWU'
+var TELEGRAM_TOKEN = exports.TELEGRAM_TOKEN = '407191495:AAFvFL2_KtFmo7QlcPzV7bJR-14YYBxTbXo';
 var TELEGRAM_BOT_URL = exports.TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot/';
 
 var DB_CONFIG = exports.DB_CONFIG = {
@@ -50,13 +50,13 @@ var ASSEMBLA_CREDENTIALS = exports.ASSEMBLA_CREDENTIALS = {
 var REFRESH_TOKEN_URI = exports.REFRESH_TOKEN_URI = 'https://' + ASSEMBLA_CREDENTIALS.client.id + ':' + ASSEMBLA_CREDENTIALS.client.secret + '@api.assembla.com/token?grant_type=refresh_token&refresh_token=';
 
 var COMMANDS = exports.COMMANDS = {
-  START: 'start',
-  CONNECT: 'connect',
-  NEW_INTEGRATION: 'newintegration',
-  LIST_INTEGRATION: 'listintegrations',
-  DELETE_INTEGRATION: 'delintegration',
-  HELP: 'help',
-  CANCEL: 'cancel'
+  START: 'start@AssemblaBot',
+  CONNECT: 'connect@AssemblaBot',
+  NEW_INTEGRATION: 'newintegration@AssemblaBot',
+  LIST_INTEGRATION: 'listintegrations@AssemblaBot',
+  DELETE_INTEGRATION: 'delintegration@AssemblaBot',
+  HELP: 'help@AssemblaBot',
+  CANCEL: 'cancel@AssemblaBot'
 };
 
 var MESSAGE = exports.MESSAGE = {
