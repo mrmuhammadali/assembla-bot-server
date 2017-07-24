@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BotOperations = exports.TelegramBot = undefined;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _utils = require('./utils');
 
 var utils = _interopRequireWildcard(_utils);
@@ -266,28 +268,41 @@ exports.BotOperations = function BotOperations() {
     return num;
   };
 
-  this.refreshToken = function (chatId, token) {
-    token = oauth2.accessToken.create(token);
-    if (token.expired()) {
-      token.refresh().then(function (result) {
-        token = result;
-      });
-    }
+  this.refreshToken = function (chatId, spaceId, date, refresh_token) {
+    console.log("Expired!!!!!!");
+    var opts = {
+      method: 'POST',
+      uri: utils.REFRESH_TOKEN_URI + refresh_token
+    };
+    request(opts, function (error, response, token) {
+      console.log("Token Error: ", error);
+      if (token !== null) {
+        token = JSON.parse(token);
+        token = oauth2.accessToken.create(token);
+
+        var _token$token = _extends({}, token.token),
+            access_token = _token$token.access_token,
+            expires_at = _token$token.expires_at;
+
+        console.log("New Token: ", _extends({}, token.token));
+        _models2.default.Chat.update({ access_token: access_token, expires_at: expires_at }, { where: { chatId: chatId } });
+        _this.fetchActivity(chatId, spaceId, date, access_token);
+      }
+    });
   };
 
-  this.fetchActivity = function (chatId, spaceId, date, token) {
+  this.fetchActivity = function (chatId, spaceId, date, access_token) {
     var dateStr = date.getFullYear() + '-' + _this.appendZero(date.getMonth() + 1) + '-';
     dateStr += _this.appendZero(date.getUTCDate()) + ' ' + _this.appendZero(date.getUTCHours()) + ':' + _this.appendZero(date.getUTCMinutes());
-    console.log("Token: ", token);
+
     var opts = {
       method: 'GET',
       uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + dateStr,
       auth: {
-        bearer: token.access_token
+        bearer: access_token
       }
     };
     request(opts, function (error, response, activity) {
-      console.log("Request Error: ", error);
       try {
         activity = JSON.parse(activity);
         if (activity.error) {
@@ -304,6 +319,7 @@ exports.BotOperations = function BotOperations() {
                 object = _activity$i.object;
 
             var str = object + ': ' + _date + '\n' + author_name + ' ' + operation + ' \'' + title + '\' in Space \'' + space_name + '\'';
+            console.log("Request Response: ", str);
             bot.sendMessage(chatId, str);
           }
         }

@@ -47,6 +47,8 @@ var ASSEMBLA_CREDENTIALS = exports.ASSEMBLA_CREDENTIALS = {
   }
 };
 
+var REFRESH_TOKEN_URI = exports.REFRESH_TOKEN_URI = 'https://' + ASSEMBLA_CREDENTIALS.client.id + ':' + ASSEMBLA_CREDENTIALS.client.secret + '@api.assembla.com/token?grant_type=refresh_token&refresh_token=';
+
 var COMMANDS = exports.COMMANDS = {
   START: 'start',
   CONNECT: 'connect',
