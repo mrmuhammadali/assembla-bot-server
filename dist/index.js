@@ -28,12 +28,11 @@ app.get('/', function (req, res) {
 });
 
 app.get('/get-all', function (req, res) {
-  _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (integrations) {
-    if (integrations !== null) {
+  _models2.default.Chat.findAll({ include: [_models2.default.Integration] }).then(function (chats) {
+    if (chats !== null) {
       var data = [];
-      for (var i = 0; i < integrations.length; i++) {
-        var integration = integrations[i].dataValues;
-        data.push(integration);
+      for (var i = 0; i < chats.length; i++) {
+        data.push(chats[i].dataValues);
       }
       res.json(data);
     }
