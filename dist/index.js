@@ -91,10 +91,10 @@ var longPolling = function longPolling() {
     }
   });
 };
-longPolling();
-setInterval(function () {
-  longPolling();
-}, 62000);
+// longPolling()
+// setInterval(() => {
+//   longPolling()
+// }, 62000)
 
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
 
