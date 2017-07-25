@@ -28,6 +28,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var request = require('request');
 var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
 var telegram = require('node-telegram-bot-api');
+var dateFormat = require('dateformat');
 
 var bot = null;
 
@@ -292,12 +293,12 @@ exports.BotOperations = function BotOperations() {
   };
 
   this.fetchActivity = function (chatId, spaceId, date, access_token) {
-    var dateStr = date.getFullYear() + '-' + _this.appendZero(date.getMonth() + 1) + '-';
-    dateStr += _this.appendZero(date.getUTCDate()) + ' ' + _this.appendZero(date.getUTCHours()) + ':' + _this.appendZero(date.getUTCMinutes());
+    // let dateStr = `${date.getFullYear()}-${this.appendZero((date.getMonth() + 1))}-`
+    // dateStr += `${this.appendZero(date.getUTCDate())} ${this.appendZero(date.getUTCHours())}:${this.appendZero(date.getUTCMinutes())}`
 
     var opts = {
       method: 'GET',
-      uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + dateStr,
+      uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + dateFormat(date, 'yyyy-mm-dd\' \'HH:MM'),
       auth: {
         bearer: access_token
       }
@@ -318,7 +319,7 @@ exports.BotOperations = function BotOperations() {
                 title = _activity$i.title,
                 object = _activity$i.object;
 
-            var str = object + ': ' + _date + '\n' + author_name + ' ' + operation + ' \'' + title + '\' in Space \'' + space_name + '\'';
+            var str = object + ': ' + dateFormat(_date, 'mmm d, yy \'@\' HH:MM') + '\n' + author_name + ' ' + operation + ' \'' + title + '\' in \'' + space_name + '\'';
             console.log("Request Response: ", str);
             bot.sendMessage(chatId, str);
           }
