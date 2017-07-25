@@ -61,7 +61,7 @@ bot.on('callback_query', function (callbackQuery) {
 });
 
 var date = new Date();
-var millis = 100;
+var millis = 3000;
 setInterval(function () {
   millis = 90000;
   _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (res) {
