@@ -4,10 +4,6 @@ var _routes = require('./routes');
 
 var routes = _interopRequireWildcard(_routes);
 
-var _services = require('./services');
-
-var _services2 = _interopRequireDefault(_services);
-
 var _models = require('./models');
 
 var _models2 = _interopRequireDefault(_models);
@@ -21,15 +17,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var bodyParser = require('body-parser');
-var feathers = require('feathers');
-var featherClient = require('feathers/client');
-var io = require('socket.io-client');
-var socketio = require('feathers-socketio');
-var socketioClient = require('feathers-socketio/client');
+var express = require('express');
 
 var bot = new _TelegramBot.TelegramBot();
 var botOperations = new _TelegramBot.BotOperations();
-var app = feathers().use(bodyParser.json()).use(bodyParser.urlencoded()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
+var app = express().use(bodyParser.json()).use('/callback', routes.authCallback);
 
 app.get('/', function (req, res) {
   res.redirect(_utils.TELEGRAM_BOT_URL);
@@ -51,24 +43,30 @@ app.get('/get-all', function (req, res) {
 app.post('/assembla-webhook', function (req, res) {
   var data = req.body;
   console.log("Webhook Request: ", data);
-  console.log("Webhook Request: ", req);
-  console.log("Webhook Response: ", res);
   res.json({ success: true });
   bot.sendMessage(-219802955, JSON.stringify(data));
 });
+app.post('/webhook', function (req, res) {
+  var _req$body = req.body,
+      author = _req$body.author,
+      object = _req$body.object,
+      space = _req$body.space,
+      action = _req$body.action,
+      title = _req$body.title,
+      body = _req$body.body,
+      link = _req$body.link,
+      repositoryUrl = _req$body.repositoryUrl,
+      repositorySuffix = _req$body.repositorySuffix,
+      branch = _req$body.branch,
+      commitId = _req$body.commitId;
 
-// const socket = io('http://localhost:3000/');
-// const client = featherClient();
-//
-// // Set up Socket.io client with the socket
-// client.configure(socketioClient(socket));
+  var spaceSlug = link.substr(link.indexOf('code/') + 5);
+  spaceSlug = spaceSlug.substr(0, spaceSlug.indexOf('/'));
+  console.log("Webhook Request: ", spaceSlug);
+  res.json({ name: spaceSlug });
+  //bot.sendMessage(-219802955, JSON.stringify(data))
+});
 
-// app.service('users').get('cTOCMCa_4r57Jddmr6CpXy')
-
-// client.service('users').get(`cTOCMCa_4r57Jddmr6CpXy`)
-// socket.emit('users::get', `cTOCMCa_4r57Jddmr6CpXy`, { fetch: 'all' }, (error, message) => {
-//   console.log('Found message', message);
-// });
 bot.onText(/\/(.+)/, function (msg, match) {
   var command = match[1].substr(0, match[1].indexOf('@'));
   if (command === "") {
@@ -81,41 +79,6 @@ bot.on('callback_query', function (callbackQuery) {
   botOperations.handleCallbackQuery(callbackQuery);
 });
 
-var date = new Date();
-
-var longPolling = function longPolling() {
-  _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (res) {
-    if (res !== null) {
-      for (var i = 0; i < res.length; i++) {
-        var integration = res[i].dataValues;
-        var chat = integration.chat.dataValues;
-        var chatId = chat.chatId,
-            access_token = chat.access_token,
-            refresh_token = chat.refresh_token,
-            expires_at = chat.expires_at;
-
-
-        if (date.getTime() > expires_at.getTime()) {
-          botOperations.refreshToken(chatId, integration.spaceId, date, refresh_token);
-        } else {
-          botOperations.fetchActivity(chatId, integration.spaceId, date, access_token);
-        }
-
-        date = new Date();
-        console.log("Space Id " + i + ": ", integration.spaceId);
-      }
-    }
-  });
-};
-// longPolling()
-// setInterval(() => {
-//   longPolling()
-// }, 62000)
-
-// /spaces/cTOCMCa_4r57Jddmr6CpXy
-
 app.listen(process.env.PORT || 3030, function () {
   console.log('Assembla Bot Server started at port: ' + (process.env.PORT || 3030));
 });
-
-//git push https://git.heroku.com/assembla-bot-server.git master

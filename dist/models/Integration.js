@@ -2,7 +2,7 @@
 
 module.exports = function (sequelize, DataTypes) {
   var Integration = sequelize.define('integration', {
-    spaceId: DataTypes.STRING,
+    spaceWikiName: DataTypes.STRING,
     spaceName: DataTypes.STRING
   }, {
     timestamps: false
