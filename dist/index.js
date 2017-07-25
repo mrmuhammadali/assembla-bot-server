@@ -29,7 +29,7 @@ var socketioClient = require('feathers-socketio/client');
 
 var bot = new _TelegramBot.TelegramBot();
 var botOperations = new _TelegramBot.BotOperations();
-var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
+var app = feathers().use(bodyParser.json()).use(bodyParser.urlencoded()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
 
 app.get('/', function (req, res) {
   res.redirect(_utils.TELEGRAM_BOT_URL);
