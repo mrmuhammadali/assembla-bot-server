@@ -33,6 +33,11 @@ app.get('/', function (req, res) {
   res.redirect(_utils.TELEGRAM_BOT_URL);
 });
 
+app.post('/assembla-webhook', function (req, res) {
+  console.log("Webhook Request: ", req);
+  console.log("Webhook Response: ", res);
+});
+
 // const socket = io('http://localhost:3000/');
 // const client = featherClient();
 //
@@ -61,8 +66,8 @@ bot.on('callback_query', function (callbackQuery) {
 });
 
 var date = new Date();
-var millis = 62000;
-setInterval(function () {
+
+var longPolling = function longPolling() {
   _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (res) {
     if (res !== null) {
       for (var i = 0; i < res.length; i++) {
@@ -85,7 +90,11 @@ setInterval(function () {
       }
     }
   });
-}, millis);
+};
+longPolling();
+setInterval(function () {
+  longPolling();
+}, 62000);
 
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
 
