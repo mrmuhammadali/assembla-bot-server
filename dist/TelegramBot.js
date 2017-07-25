@@ -166,6 +166,8 @@ exports.BotOperations = function BotOperations() {
       command = text;
     }
 
+    console.log("Command: ", command);
+
     switch (command) {
       case utils.COMMANDS.NEW_INTEGRATION:
         {
@@ -255,13 +257,12 @@ exports.BotOperations = function BotOperations() {
       } else {
         var _spaces = [];
         for (var i = 0; i < responseBody.length; i++) {
-          console.log(responseBody[i]);
           var _responseBody$i = responseBody[i],
               wiki_name = _responseBody$i.wiki_name,
               name = _responseBody$i.name;
 
           var callback_data = JSON.stringify([wiki_name, name]);
-
+          console.log("Wiki Name: ", wiki_name);
           _spaces.push([{ text: name, callback_data: callback_data }]);
         }
 
