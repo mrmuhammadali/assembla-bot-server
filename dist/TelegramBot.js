@@ -161,7 +161,7 @@ exports.BotOperations = function BotOperations() {
 
     var text = msg.reply_to_message.text;
 
-    var command = text.substr(1, text.indexOf('@'));
+    var command = text.substr(1, text.indexOf('@') - 1);
     if (command === "") {
       command = text;
     }
