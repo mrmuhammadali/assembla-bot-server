@@ -248,9 +248,8 @@ exports.BotOperations = function BotOperations() {
 
   this.handlePing = function (chatId) {
     request.get(utils.BASE_URL + '/ping', function (err, res, body) {
-      var pinged = body.pinged;
-
-      if (pinged) {
+      body = JSON.parse(body);
+      if (body.pinged) {
         bot.sendMessage(chatId, utils.MESSAGE.PING);
       }
     });
