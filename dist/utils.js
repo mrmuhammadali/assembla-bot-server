@@ -29,8 +29,8 @@ var DB_CONFIG_LOCAL = exports.DB_CONFIG_LOCAL = {
   password: '6#vWHD_$',
   options: {
     host: '127.0.0.1',
-    // port: '55335',
-    port: '3306',
+    port: '55335',
+    // port: '3306',
     dialect: 'mysql'
   }
 };
@@ -50,13 +50,13 @@ var ASSEMBLA_CREDENTIALS = exports.ASSEMBLA_CREDENTIALS = {
 var REFRESH_TOKEN_URI = exports.REFRESH_TOKEN_URI = 'https://' + ASSEMBLA_CREDENTIALS.client.id + ':' + ASSEMBLA_CREDENTIALS.client.secret + '@api.assembla.com/token?grant_type=refresh_token&refresh_token=';
 
 var COMMANDS = exports.COMMANDS = {
-  START: 'start@AssemblaBot',
-  CONNECT: 'connect@AssemblaBot',
-  NEW_INTEGRATION: 'newintegration@AssemblaBot',
-  LIST_INTEGRATION: 'listintegrations@AssemblaBot',
-  DELETE_INTEGRATION: 'delintegration@AssemblaBot',
-  HELP: 'help@AssemblaBot',
-  CANCEL: 'cancel@AssemblaBot'
+  START: 'start',
+  CONNECT: 'connect',
+  NEW_INTEGRATION: 'newintegration',
+  LIST_INTEGRATION: 'listintegrations',
+  DELETE_INTEGRATION: 'delintegration',
+  HELP: 'help',
+  CANCEL: 'cancel'
 };
 
 var MESSAGE = exports.MESSAGE = {

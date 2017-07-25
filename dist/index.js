@@ -1,7 +1,5 @@
 'use strict';
 
-var _utils = require('./utils');
-
 var _routes = require('./routes');
 
 var routes = _interopRequireWildcard(_routes);
@@ -45,7 +43,8 @@ var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback
 var bot = new _TelegramBot.TelegramBot();
 var botOperations = new _TelegramBot.BotOperations();
 bot.onText(/\/(.+)/, function (msg, match) {
-  botOperations.handleCommands(msg, match[1]);
+  var command = match[1].substr(0, match[1].indexOf('@'));
+  botOperations.handleCommands(msg, command);
 });
 
 bot.on('callback_query', function (callbackQuery) {
