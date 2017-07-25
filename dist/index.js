@@ -44,7 +44,9 @@ var bot = new _TelegramBot.TelegramBot();
 var botOperations = new _TelegramBot.BotOperations();
 bot.onText(/\/(.+)/, function (msg, match) {
   var command = match[1].substr(0, match[1].indexOf('@'));
-  console.log("Command: ", command);
+  if (command === null) {
+    command = match[1];
+  }
   botOperations.handleCommands(msg, command);
 });
 
