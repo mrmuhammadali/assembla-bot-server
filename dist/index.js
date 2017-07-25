@@ -27,6 +27,8 @@ var io = require('socket.io-client');
 var socketio = require('feathers-socketio');
 var socketioClient = require('feathers-socketio/client');
 
+var bot = new _TelegramBot.TelegramBot();
+var botOperations = new _TelegramBot.BotOperations();
 var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
 
 app.get('/', function (req, res) {
@@ -39,8 +41,7 @@ app.get('/get-all', function (req, res) {
       var data = [];
       for (var i = 0; i < integrations.length; i++) {
         var integration = integrations[i].dataValues;
-        var chat = integration.chat.dataValues;
-        data.push({ integration: integration, chat: chat });
+        data.push(integration);
       }
       res.json(data);
     }
@@ -50,6 +51,8 @@ app.get('/get-all', function (req, res) {
 app.post('/assembla-webhook', function (req, res) {
   console.log("Webhook Request: ", req);
   console.log("Webhook Response: ", res);
+  bot.sendMessage(-219802955, "Request:\n" + JSON.stringify(req));
+  bot.sendMessage(-219802955, "Response:\n" + JSON.stringify(res));
 });
 
 // const socket = io('http://localhost:3000/');
@@ -64,9 +67,6 @@ app.post('/assembla-webhook', function (req, res) {
 // socket.emit('users::get', `cTOCMCa_4r57Jddmr6CpXy`, { fetch: 'all' }, (error, message) => {
 //   console.log('Found message', message);
 // });
-
-var bot = new _TelegramBot.TelegramBot();
-var botOperations = new _TelegramBot.BotOperations();
 bot.onText(/\/(.+)/, function (msg, match) {
   var command = match[1].substr(0, match[1].indexOf('@'));
   if (command === "") {
