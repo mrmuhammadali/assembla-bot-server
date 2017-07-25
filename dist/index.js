@@ -61,8 +61,9 @@ bot.on('callback_query', function (callbackQuery) {
 });
 
 var date = new Date();
-
+var millis = 100;
 setInterval(function () {
+  millis = 90000;
   _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (res) {
     if (res !== null) {
       for (var i = 0; i < res.length; i++) {
@@ -85,7 +86,7 @@ setInterval(function () {
       }
     }
   });
-}, 90000);
+}, millis);
 
 // /spaces/cTOCMCa_4r57Jddmr6CpXy
 
