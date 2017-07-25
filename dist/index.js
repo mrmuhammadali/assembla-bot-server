@@ -33,6 +33,20 @@ app.get('/', function (req, res) {
   res.redirect(_utils.TELEGRAM_BOT_URL);
 });
 
+app.get('/get-all', function (req, res) {
+  _models2.default.Integration.findAll({ include: [_models2.default.Chat] }).then(function (integrations) {
+    if (integrations !== null) {
+      var data = [];
+      for (var i = 0; i < integrations.length; i++) {
+        var integration = integrations[i].dataValues;
+        var chat = integration.chat.dataValues;
+        data.push({ integration: integration, chat: chat });
+      }
+      res.json(data);
+    }
+  });
+});
+
 app.post('/assembla-webhook', function (req, res) {
   console.log("Webhook Request: ", req);
   console.log("Webhook Response: ", res);
