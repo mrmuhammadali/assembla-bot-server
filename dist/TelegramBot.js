@@ -138,10 +138,10 @@ exports.BotOperations = function BotOperations() {
     });
   };
 
-  this.deleteIntegration = function (chatId, message_id, spaceWikiName, spaceName) {
+  this.deleteIntegration = function (chatId, message_id, integrationId, spaceName) {
     var opts = { chat_id: chatId, message_id: message_id };
 
-    _models2.default.Integration.destroy({ where: { chatId: chatId, spaceWikiName: spaceWikiName } }).then(function (res) {
+    _models2.default.Integration.destroy({ where: { id: integrationId } }).then(function (res) {
       if (res >= 1) {
         bot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_DELETED, opts);
       } else {
@@ -335,10 +335,10 @@ exports.BotOperations = function BotOperations() {
         var _spaces2 = [];
         for (var i = 0; i < integrations.length; i++) {
           var _integrations$i$dataV = integrations[i].dataValues,
-              spaceWikiName = _integrations$i$dataV.spaceWikiName,
+              id = _integrations$i$dataV.id,
               spaceName = _integrations$i$dataV.spaceName;
 
-          var callback_data = JSON.stringify([spaceWikiName, spaceName]);
+          var callback_data = JSON.stringify([id, spaceName]);
 
           _spaces2.push([{ text: spaceName, callback_data: callback_data }]);
         }

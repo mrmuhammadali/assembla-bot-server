@@ -40,12 +40,6 @@ app.get('/get-all', function (req, res) {
 });
 
 app.post('/assembla-webhook', function (req, res) {
-  var data = req.body;
-  console.log("Webhook Request: ", data);
-  res.json({ success: true });
-  bot.sendMessage(-219802955, JSON.stringify(data));
-});
-app.post('/webhook', function (req, res) {
   var _req$body = req.body,
       author = _req$body.author,
       object = _req$body.object,
@@ -59,11 +53,22 @@ app.post('/webhook', function (req, res) {
       branch = _req$body.branch,
       commitId = _req$body.commitId;
 
-  var spaceSlug = link.substr(link.indexOf('code/') + 5);
-  spaceSlug = spaceSlug.substr(0, spaceSlug.indexOf('/'));
-  console.log("Webhook Request: ", spaceSlug);
-  res.json({ name: spaceSlug });
-  //bot.sendMessage(-219802955, JSON.stringify(data))
+  var spaceWikiName = link.substr(link.indexOf('code/') + 5);
+  spaceWikiName = spaceWikiName.substr(0, spaceWikiName.indexOf('/'));
+  var str = object + ':\n' + author + ' ' + action + ' \'' + title + '\' in \'' + space + '\'';
+  _models2.default.Integration.findAll({ where: { spaceWikiName: spaceWikiName } }).then(function (integrations) {
+    if (integrations !== null) {
+      for (var i = 0; i < integrations.length; i++) {
+        var _integrations$i$dataV = integrations[i].dataValues,
+            _spaceWikiName = _integrations$i$dataV.spaceWikiName,
+            chatId = _integrations$i$dataV.chatId;
+
+        console.log(chatId + ": ", _spaceWikiName);
+        bot.sendMessage(chatId, str);
+      }
+    }
+  });
+  res.json({ name: spaceWikiName });
 });
 
 bot.onText(/\/(.+)/, function (msg, match) {
