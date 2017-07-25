@@ -154,13 +154,19 @@ exports.BotOperations = function BotOperations() {
 
   this.handleCallbackQuery = function (callbackQuery) {
     var msg = callbackQuery.message;
-    var action = msg.reply_to_message.text.substr(1);
     var chat_id = msg.chat.id;
     var data = JSON.parse(callbackQuery.data);
     var spaceWikiName = data[0];
     var spaceName = data[1];
 
-    switch (action) {
+    var text = msg.reply_to_message.text;
+
+    var command = text.substr(1, text.indexOf('@'));
+    if (command === "") {
+      command = text;
+    }
+
+    switch (command) {
       case utils.COMMANDS.NEW_INTEGRATION:
         {
           _this.insertIntegration(chat_id, msg.message_id, spaceWikiName, spaceName);
