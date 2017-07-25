@@ -24,7 +24,11 @@ var botOperations = new _TelegramBot.BotOperations();
 var app = express().use(bodyParser.json()).use('/callback', routes.authCallback);
 
 app.get('/', function (req, res) {
-  res.redirect(_utils.TELEGRAM_BOT_URL);
+  return res.redirect(_utils.TELEGRAM_BOT_URL);
+});
+
+app.get('/ping', function (req, res) {
+  return res.json({ pinged: true });
 });
 
 app.get('/get-all', function (req, res) {

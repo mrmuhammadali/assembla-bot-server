@@ -225,6 +225,11 @@ exports.BotOperations = function BotOperations() {
           _this.handleDeleteIntegration(chatId, msg.message_id);
           break;
         }
+      case COMMANDS.PING:
+        {
+          _this.handlePing(chatId);
+          break;
+        }
       default:
         {
           bot.sendMessage(chatId, utils.MESSAGE.COMMAND_NOT_FOUND);
@@ -239,6 +244,16 @@ exports.BotOperations = function BotOperations() {
       state: chatId
     });
     bot.sendMessage(chatId, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
+  };
+
+  this.handlePing = function (chatId) {
+    request.get(utils.BASE_URL + '/ping', function (err, res, body) {
+      var pinged = body.pinged;
+
+      if (pinged) {
+        bot.sendMessage(chatId, utils.MESSAGE.PING);
+      }
+    });
   };
 
   this.fetchSpaces = function (chatId, msg, access_token) {

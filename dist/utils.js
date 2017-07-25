@@ -56,6 +56,7 @@ var COMMANDS = exports.COMMANDS = {
   LIST_INTEGRATION: 'listintegrations',
   DELETE_INTEGRATION: 'delintegration',
   HELP: 'help',
+  PING: 'ping',
   CANCEL: 'cancel'
 };
 
@@ -74,6 +75,7 @@ var MESSAGE = exports.MESSAGE = {
   SPACE_INTEGRATED: " space integrated successfully.",
   SPACE_DELETED: " space deleted from this chat.",
   LIST_INTEGRATION: 'Following spaces are integrated:\n',
+  PING: 'Good morning! Sorry I was asleep.',
   DATABASE_ERROR: "Process failed! Try again later.",
   INTRODUCE_BOT: 'I\'m a Assembla bot. I\'ll send notifications of activities in a space.\n\nAvailable commands:\n  /connect - Authorize bot via OAuth\n  /newintegration - Add integration with a GitHub repository\n  /listintegrations - List all current integrations\n  /delintegration - Delete integration\n  /help - List available commands\n  /cancel - Cancel the current command'
 };
