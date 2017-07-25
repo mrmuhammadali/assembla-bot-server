@@ -51,6 +51,7 @@ app.get('/get-all', function (req, res) {
 app.post('/assembla-webhook', function (req, res) {
   var data = req.body;
   console.log("Webhook Request: ", data);
+  res.json({ success: true });
   bot.sendMessage(-219802955, JSON.stringify(data));
 });
 
