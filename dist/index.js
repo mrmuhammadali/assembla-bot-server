@@ -49,10 +49,8 @@ app.get('/get-all', function (req, res) {
 });
 
 app.post('/assembla-webhook', function (req, res) {
-  console.log("Webhook Request: ", req);
+  console.log("Webhook Request: ", req.body);
   console.log("Webhook Response: ", res);
-  bot.sendMessage(-219802955, "Request:\n" + JSON.stringify(req));
-  bot.sendMessage(-219802955, "Response:\n" + JSON.stringify(res));
 });
 
 // const socket = io('http://localhost:3000/');
