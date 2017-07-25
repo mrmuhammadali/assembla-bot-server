@@ -262,13 +262,6 @@ exports.BotOperations = function BotOperations() {
     });
   };
 
-  this.appendZero = function (num) {
-    if (num < 10) {
-      return '0' + num;
-    }
-    return num;
-  };
-
   this.refreshToken = function (chatId, spaceId, date, refresh_token) {
     console.log("Expired!!!!!!");
     var opts = {
@@ -293,9 +286,6 @@ exports.BotOperations = function BotOperations() {
   };
 
   this.fetchActivity = function (chatId, spaceId, date, access_token) {
-    // let dateStr = `${date.getFullYear()}-${this.appendZero((date.getMonth() + 1))}-`
-    // dateStr += `${this.appendZero(date.getUTCDate())} ${this.appendZero(date.getUTCHours())}:${this.appendZero(date.getUTCMinutes())}`
-    console.log("Date: ", dateFormat(date, 'yyyy-mm-dd\' \'HH:MM'));
     var opts = {
       method: 'GET',
       uri: 'https://api.assembla.com/v1/activity.json?space_id=' + spaceId + '&from=' + dateFormat(date, 'yyyy-mm-dd\' \'HH:MM'),

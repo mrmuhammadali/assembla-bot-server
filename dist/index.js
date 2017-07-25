@@ -12,6 +12,8 @@ var _models = require('./models');
 
 var _models2 = _interopRequireDefault(_models);
 
+var _utils = require('./utils');
+
 var _TelegramBot = require('./TelegramBot');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -26,6 +28,10 @@ var socketio = require('feathers-socketio');
 var socketioClient = require('feathers-socketio/client');
 
 var app = feathers().use(bodyParser.json()).use('/callback', routes.authCallback).configure(socketio()).configure(_services2.default);
+
+app.get('/', function (req, res) {
+  res.redirect(_utils.TELEGRAM_BOT_URL);
+});
 
 // const socket = io('http://localhost:3000/');
 // const client = featherClient();
