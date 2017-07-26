@@ -18,6 +18,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var bodyParser = require('body-parser');
 var express = require('express');
+var builder = require('botbuilder');
 
 var bot = new _TelegramBot.TelegramBot();
 var botOperations = new _TelegramBot.BotOperations();
@@ -41,6 +42,28 @@ app.get('/get-all', function (req, res) {
       res.json(data);
     }
   });
+});
+
+// Create chat bot
+var connector = new builder.ChatConnector({
+  appId: "5452dd9e-b3f2-440f-ad4c-3352296a254f",
+  appPassword: "jc4zckwu1uKd90zF6V1Gr4e"
+});
+var botSkype = new builder.UniversalBot(connector);
+app.post('/skype-messaging', connector.listen());
+
+String.prototype.contains = function (content) {
+  return undefined.indexOf(content) !== -1;
+};
+
+botSkype.dialog('/', function (session) {
+  if (session.message.text.toLowerCase().contains('hello')) {
+    session.send('Hey, How are you?');
+  } else if (session.message.text.toLowerCase().contains('help')) {
+    session.send('How can I help you?');
+  } else {
+    session.send('Sorry I don\'t understand you...');
+  }
 });
 
 app.post('/assembla-webhook', function (req, res) {
