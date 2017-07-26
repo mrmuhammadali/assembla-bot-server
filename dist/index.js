@@ -53,9 +53,8 @@ var botSkype = new builder.UniversalBot(connector);
 app.post('/skype-messaging', connector.listen());
 
 botSkype.dialog('/', function (session) {
-  var text = session.message.text;
-
-  var command = text ? text.substr(0, text.indexOf('@')).trim() : text.trim();
+  var text = session.message.text.substr(0, session.message.text.indexOf('@')).trim();
+  var command = text ? text : session.message.text.trim();
 
   console.log("Session: ", session.message);
   session.send("You sent: " + command);
