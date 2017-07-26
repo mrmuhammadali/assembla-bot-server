@@ -53,8 +53,13 @@ var botSkype = new builder.UniversalBot(connector);
 app.post('/skype-messaging', connector.listen());
 
 botSkype.dialog('/', function (session) {
+  var command = session.message.text;
+  command = command.substr(0, command.indexOf('@'));
+  if (command === null) {
+    command = session.message.text;
+  }
   console.log("Session: ", session.message);
-  session.send("You sent: " + session.message.text);
+  session.send("You sent: " + command);
 });
 
 app.post('/assembla-webhook', function (req, res) {
