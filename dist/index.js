@@ -53,14 +53,8 @@ var botSkype = new builder.UniversalBot(connector);
 app.post('/skype-messaging', connector.listen());
 
 botSkype.dialog('/', function (session) {
-  session.send(session.message.text);
-  if (session.message.text.toLowerCase().contains('hello')) {
-    session.send('Hey, How are you?');
-  } else if (session.message.text.toLowerCase().contains('help')) {
-    session.send('How can I help you?');
-  } else {
-    session.send('Sorry I don\'t understand you...');
-  }
+  console.log("Session: ", session);
+  session.send("You sent: " + session.message.text);
 });
 
 app.post('/assembla-webhook', function (req, res) {
