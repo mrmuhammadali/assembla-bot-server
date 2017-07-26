@@ -53,6 +53,7 @@ var botSkype = new builder.UniversalBot(connector);
 app.post('/skype-messaging', connector.listen());
 
 botSkype.dialog('/', function (session) {
+  session.send(session.message.text);
   if (session.message.text.toLowerCase().contains('hello')) {
     session.send('Hey, How are you?');
   } else if (session.message.text.toLowerCase().contains('help')) {
