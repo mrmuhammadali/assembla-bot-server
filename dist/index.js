@@ -52,10 +52,6 @@ var connector = new builder.ChatConnector({
 var botSkype = new builder.UniversalBot(connector);
 app.post('/skype-messaging', connector.listen());
 
-String.prototype.contains = function (content) {
-  return undefined.indexOf(content) !== -1;
-};
-
 botSkype.dialog('/', function (session) {
   if (session.message.text.toLowerCase().contains('hello')) {
     session.send('Hey, How are you?');
