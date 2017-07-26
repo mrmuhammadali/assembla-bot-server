@@ -53,7 +53,7 @@ var botSkype = new builder.UniversalBot(connector);
 app.post('/skype-messaging', connector.listen());
 
 botSkype.dialog('/', function (session) {
-  console.log("Session: ", session);
+  console.log("Session: ", session.message);
   session.send("You sent: " + session.message.text);
 });
 
