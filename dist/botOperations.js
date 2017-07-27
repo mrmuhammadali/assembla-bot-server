@@ -111,8 +111,8 @@ exports.BotOperations = function BotOperations() {
 
   this.handleCommands = function (command, isSkype, session) {
     command = (0, _lodash.without)((0, _lodash.words)(command), 'Assembla', 'Bot')[0];
-
     var COMMANDS = utils.COMMANDS;
+
     switch (command) {
       case COMMANDS.START:
       case COMMANDS.HELP:
@@ -128,16 +128,21 @@ exports.BotOperations = function BotOperations() {
         }
       case COMMANDS.CONNECT:
         {
+          var _get = (0, _lodash.get)(session, 'chat', ' '),
+              _id = _get.id;
+
+          if (_id === ' ') {
+            _id = (0, _lodash.get)(session, 'message.address.conversation', ' ');
+          }
           var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
             client_id: utils.ASSEMBLA_CREDENTIALS.client.id,
             response_type: 'code',
-            state: chatId
+            state: _id
           });
+
           if (isSkype) {
             session.send(utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           } else {
-            var _id = session.chat.id;
-
             telegramBot.sendMessage(_id, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           }
           break;
