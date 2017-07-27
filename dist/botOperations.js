@@ -128,11 +128,9 @@ exports.BotOperations = function BotOperations() {
         }
       case COMMANDS.CONNECT:
         {
-          var _get = (0, _lodash.get)(session, 'chat', ' '),
-              _id = _get.id;
-
+          var _id = (0, _lodash.get)(session, 'chat.id', ' ');
           if (_id === ' ') {
-            _id = (0, _lodash.get)(session, 'message.address.conversation', ' ');
+            _id = (0, _lodash.get)(session, 'message.address.conversation.id', ' ');
           }
           var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
             client_id: utils.ASSEMBLA_CREDENTIALS.client.id,
