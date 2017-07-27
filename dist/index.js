@@ -14,8 +14,6 @@ var _TelegramBot = require('./TelegramBot');
 
 var _botOperations = require('./botOperations');
 
-var _botOperations2 = _interopRequireDefault(_botOperations);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -25,6 +23,7 @@ var express = require('express');
 var builder = require('botbuilder');
 
 var bot = new _TelegramBot.TelegramBot();
+var botOperations = new _botOperations.BotOperations();
 var app = express().use(bodyParser.json()).use('/callback', routes.authCallback);
 
 app.get('/', function (req, res) {
@@ -65,7 +64,7 @@ botSkype.dialog('/', function (session) {
       text = _session$message.text;
 
   console.log("Session: ", address);
-  _botOperations2.default.handleCommands(text, true, session);
+  botOperations.handleCommands(text, true, session);
 });
 
 app.post('/assembla-webhook', function (req, res) {
@@ -101,11 +100,11 @@ app.post('/assembla-webhook', function (req, res) {
 });
 
 bot.onText(/\/(.+)/, function (msg, match) {
-  _botOperations2.default.handleCommands(match[1], false, msg);
+  botOperations.handleCommands(match[1], false, msg);
 });
 
 bot.on('callback_query', function (callbackQuery) {
-  _botOperations2.default.handleCallbackQuery(callbackQuery);
+  botOperations.handleCallbackQuery(callbackQuery);
 });
 
 app.listen(process.env.PORT || 3030, function () {
