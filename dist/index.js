@@ -12,6 +12,10 @@ var _utils = require('./utils');
 
 var _TelegramBot = require('./TelegramBot');
 
+var _botOperations = require('./botOperations');
+
+var _botOperations2 = _interopRequireDefault(_botOperations);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -21,15 +25,10 @@ var express = require('express');
 var builder = require('botbuilder');
 
 var bot = new _TelegramBot.TelegramBot();
-var botOperations = new _TelegramBot.BotOperations();
 var app = express().use(bodyParser.json()).use('/callback', routes.authCallback);
 
 app.get('/', function (req, res) {
   return res.redirect(_utils.TELEGRAM_BOT_URL);
-});
-
-app.get('/ping', function (req, res) {
-  return res.json({ pinged: true });
 });
 
 app.get('/get-all', function (req, res) {
@@ -44,20 +43,29 @@ app.get('/get-all', function (req, res) {
   });
 });
 
+var address = _utils.SKYPE_ADDRESS;
+address.conversation.id = 'hello';
+console.log(address);
+
 // Create chat bot
 var connector = new builder.ChatConnector({
   appId: "5452dd9e-b3f2-440f-ad4c-3352296a254f",
   appPassword: "jc4zckwu1uKd90zF6V1Gr4e"
 });
 var botSkype = new builder.UniversalBot(connector);
+
+var reply = new builder.Message().address(address).text("Automated");
+// botSkype.send(reply);
+
 app.post('/skype-messaging', connector.listen());
 
 botSkype.dialog('/', function (session) {
-  var text = session.message.text.substr(0, session.message.text.indexOf('@')).trim();
-  var command = text ? text : session.message.text.trim();
+  var _session$message = session.message,
+      address = _session$message.address,
+      text = _session$message.text;
 
-  console.log("Session: ", session.message);
-  session.send("You sent: " + command);
+  console.log("Session: ", address);
+  _botOperations2.default.handleCommands(text, true, session);
 });
 
 app.post('/assembla-webhook', function (req, res) {
@@ -93,15 +101,11 @@ app.post('/assembla-webhook', function (req, res) {
 });
 
 bot.onText(/\/(.+)/, function (msg, match) {
-  var command = match[1].substr(0, match[1].indexOf('@'));
-  if (command === "") {
-    command = match[1];
-  }
-  botOperations.handleCommands(msg, command);
+  _botOperations2.default.handleCommands(match[1], false, msg);
 });
 
 bot.on('callback_query', function (callbackQuery) {
-  botOperations.handleCallbackQuery(callbackQuery);
+  _botOperations2.default.handleCallbackQuery(callbackQuery);
 });
 
 app.listen(process.env.PORT || 3030, function () {
