@@ -129,9 +129,12 @@ exports.BotOperations = function BotOperations() {
       case COMMANDS.CONNECT:
         {
           var _id = (0, _lodash.get)(session, 'chat.id', ' ');
+          console.log("ID 1:", _id);
           if (_id === ' ') {
             _id = (0, _lodash.get)(session, 'message.address.conversation.id', ' ');
+            console.log("ID 2:", _id);
           }
+          console.log("ID 3:", _id);
           var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
             client_id: utils.ASSEMBLA_CREDENTIALS.client.id,
             response_type: 'code',
