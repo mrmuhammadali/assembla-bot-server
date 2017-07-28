@@ -112,7 +112,7 @@ exports.BotOperations = function BotOperations() {
   _classCallCheck(this, BotOperations);
 
   this.handleCommands = function (command, isSkype, session) {
-    command = (0, _lodash.without)((0, _lodash.words)(command), 'Assembla', 'Bot')[0];
+    command = (0, _lodash.without)((0, _lodash.words)(command), 'Assembla', 'Bot')[0].toLowerCase();
     var COMMANDS = utils.COMMANDS;
     var chatId = isSkype ? (0, _lodash.get)(session, 'message.address.conversation.id', '') + '' : (0, _lodash.get)(session, 'chat.id', '') + '';
 
@@ -136,9 +136,7 @@ exports.BotOperations = function BotOperations() {
           });
 
           if (isSkype) {
-            var msg = new builder.SigninCard(session).text(utils.MESSAGE.CONNECT).button('Authorize', AUTHORIZATION_URI);
-            session.send(msg);
-            // session.send(utils.MESSAGE.CONNECT + AUTHORIZATION_URI)
+            session.send(utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           } else {
             telegramBot.sendMessage(chatId, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           }
