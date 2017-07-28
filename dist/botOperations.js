@@ -278,7 +278,7 @@ exports.BotOperations = function BotOperations() {
           //TODO integration in skype
 
           var msg = session.message;
-          msg.addAttachment({
+          var attachmentObj = {
             contentType: "application/vnd.microsoft.card.adaptive",
             content: {
               type: "AdaptiveCard",
@@ -308,11 +308,20 @@ exports.BotOperations = function BotOperations() {
                 "title": "Dismiss"
               }]
             }
-          });
+          };
+          if (msg.attachments && msg.attachments.length > 0) {
+            var attachment = msg.attachments[0];
+            console.log("Attachment: ", attachment);
+            session.send({
+              attachments: [attachmentObj]
+            });
+          }
 
           console.log("isSkype: ", isSkype);
 
-          session.send(msg).endDialog();
+          session.send({
+            attachments: [attachmentObj]
+          });
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
