@@ -350,11 +350,12 @@ exports.BotOperations = function BotOperations() {
 
   this.handleNewIntegration = function (isSkype, chatId, session) {
     _models2.default.Chat.findOne({ where: { chatId: chatId } }).then(function (chat) {
-      console.log(chat.dataValues);
-      var _chat$dataValues = chat.dataValues,
-          access_token = _chat$dataValues.access_token,
-          refresh_token = _chat$dataValues.refresh_token,
-          expires_at = _chat$dataValues.expires_at;
+      console.log(chat);
+
+      var _get = (0, _lodash.get)(chat, 'dataValues', ''),
+          access_token = _get.access_token,
+          refresh_token = _get.refresh_token,
+          expires_at = _get.expires_at;
 
       if (new Date().getTime() > expires_at.getTime()) {
         _this.refreshToken(isSkype, chatId, session, refresh_token);
