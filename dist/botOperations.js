@@ -328,11 +328,13 @@ exports.BotOperations = function BotOperations() {
           console.log(integrations[i].dataValues.spaceName);
           integrationStr += i + 1 + '. ' + integrations[i].dataValues.spaceName + '\n';
         }
+        var message = integrationStr ? utils.MESSAGE.LIST_INTEGRATION + integrationStr : utils.MESSAGE.NOTHING_INTEGRATED;
+
         if (isSkype) {
-          session.send(utils.MESSAGE.LIST_INTEGRATION + integrationStr);
+          session.send(message);
         } else {
           var reply_to_message_id = (0, _lodash.get)(session, 'message_id', 0);
-          telegramBot.sendMessage(chatId, utils.MESSAGE.LIST_INTEGRATION + integrationStr, { reply_to_message_id: reply_to_message_id });
+          telegramBot.sendMessage(chatId, message, { reply_to_message_id: reply_to_message_id });
         }
       }
     });
