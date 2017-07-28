@@ -276,6 +276,9 @@ exports.BotOperations = function BotOperations() {
 
         if (isSkype) {
           //TODO integration in skype
+          console.log("isSkype: ", isSkype);
+          var connector = new builder.ChatConnector(utils.SKYPE_CREDENTIALS);
+          var skypeBot = new builder.UniversalBot(connector);
 
           var msg = new builder.Message(session).addAttachment({
             contentType: "application/vnd.microsoft.card.adaptive",
