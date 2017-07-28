@@ -199,7 +199,7 @@ exports.BotOperations = function BotOperations() {
 
   this.handleCallbackQuery = function (callbackQuery) {
     var msg = callbackQuery.message;
-    var chat_id = msg.chat.id;
+    var chat_id = msg.chat.id + '';
     var data = JSON.parse(callbackQuery.data);
     var spaceWikiName = data[0];
     var spaceName = data[1];
