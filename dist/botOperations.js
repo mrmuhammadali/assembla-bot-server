@@ -313,7 +313,9 @@ exports.BotOperations = function BotOperations() {
           console.log("isSkype: ", isSkype);
 
           session.send({
-            text: "hello"
+            type: "message",
+            text: "hello:",
+            attachments: [attachmentObj]
           });
         } else {
           var _opts = {
