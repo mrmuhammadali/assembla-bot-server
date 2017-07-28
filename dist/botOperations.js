@@ -318,8 +318,23 @@ exports.BotOperations = function BotOperations() {
           //   ]
           // });
 
-          var msg = new builder.Message(session).text("Thank you for expressing").suggestedActions(builder.SuggestedActions.create(session, [builder.CardAction.imBack(session, "productId=1&color=green", "Green"), builder.CardAction.imBack(session, "productId=1&color=blue", "Blue"), builder.CardAction.imBack(session, "productId=1&color=red", "Red")]));
-          session.send(msg);
+          var salesData = {
+            "west": {
+              units: 200,
+              total: "$6,000"
+            },
+            "central": {
+              units: 100,
+              total: "$3,000"
+            },
+            "east": {
+              units: 300,
+              total: "$9,000"
+            }
+          };
+          builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
+          // session.send(msg);
+
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
