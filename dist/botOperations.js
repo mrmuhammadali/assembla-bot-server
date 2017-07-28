@@ -112,7 +112,7 @@ exports.BotOperations = function BotOperations() {
   this.handleCommands = function (command, isSkype, session) {
     command = (0, _lodash.without)((0, _lodash.words)(command), 'Assembla', 'Bot')[0];
     var COMMANDS = utils.COMMANDS;
-    var chatId = isSkype ? (0, _lodash.get)(session, 'message.address.conversation.id', ' ') : (0, _lodash.get)(session, 'chat.id', ' ');
+    var chatId = isSkype ? (0, _lodash.get)(session, 'message.address.conversation.id', '') + '' : (0, _lodash.get)(session, 'chat.id', '') + '';
 
     switch (command) {
       case COMMANDS.START:
