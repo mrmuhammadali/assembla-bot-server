@@ -276,14 +276,8 @@ exports.BotOperations = function BotOperations() {
 
         if (isSkype) {
           //TODO integration in skype
-          console.log("isSkype: ", isSkype);
-          var connector = new builder.ChatConnector(utils.SKYPE_CREDENTIALS);
-          var skypeBot = new builder.UniversalBot(connector);
 
-          var address = utils.SKYPE_ADDRESS;
-          address.conversation.id = chatId;
-
-          var msg = new builder.Message().address(address).addAttachment({
+          var msg = new builder.Message(session).addAttachment({
             contentType: "application/vnd.microsoft.card.adaptive",
             content: {
               type: "AdaptiveCard",
@@ -315,7 +309,9 @@ exports.BotOperations = function BotOperations() {
             }
           });
 
-          skypeBot.send(msg);
+          console.log("isSkype: ", isSkype);
+
+          session.send(msg).endDialog();
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
@@ -353,8 +349,6 @@ exports.BotOperations = function BotOperations() {
 
   this.handleNewIntegration = function (isSkype, chatId, session) {
     _models2.default.Chat.findOne({ where: { chatId: chatId } }).then(function (chat) {
-      console.log(chat);
-
       var _get = (0, _lodash.get)(chat, 'dataValues', ''),
           access_token = _get.access_token,
           refresh_token = _get.refresh_token,
