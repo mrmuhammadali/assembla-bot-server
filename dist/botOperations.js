@@ -280,7 +280,10 @@ exports.BotOperations = function BotOperations() {
           var connector = new builder.ChatConnector(utils.SKYPE_CREDENTIALS);
           var skypeBot = new builder.UniversalBot(connector);
 
-          var msg = new builder.Message(session).addAttachment({
+          var address = utils.SKYPE_ADDRESS;
+          address.conversation.id = chatId;
+
+          var msg = new builder.Message().address(address).addAttachment({
             contentType: "application/vnd.microsoft.card.adaptive",
             content: {
               type: "AdaptiveCard",
@@ -312,7 +315,7 @@ exports.BotOperations = function BotOperations() {
             }
           });
 
-          session.send(msg);
+          skypeBot.send(msg);
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
