@@ -277,7 +277,6 @@ exports.BotOperations = function BotOperations() {
         if (isSkype) {
           //TODO integration in skype
 
-          var msg = session.message;
           var attachmentObj = {
             contentType: "application/vnd.microsoft.card.adaptive",
             content: {
@@ -314,7 +313,6 @@ exports.BotOperations = function BotOperations() {
 
           session.send({
             type: "message",
-            text: "hello:",
             attachments: [attachmentObj]
           });
         } else {
