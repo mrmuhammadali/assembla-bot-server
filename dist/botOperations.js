@@ -206,10 +206,7 @@ exports.BotOperations = function BotOperations() {
 
     var text = msg.reply_to_message.text;
 
-    var command = text.substr(1, text.indexOf('@') - 1);
-    if (command === "") {
-      command = text;
-    }
+    var command = (0, _lodash.without)((0, _lodash.words)(text), 'Assembla', 'Bot')[0];
 
     console.log("Command: ", command);
 
