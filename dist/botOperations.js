@@ -136,7 +136,8 @@ exports.BotOperations = function BotOperations() {
           });
 
           if (isSkype) {
-            session.send(utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
+            builder.SigninCard(session).text(utils.MESSAGE.CONNECT).button('Authorize', AUTHORIZATION_URI);
+            // session.send(utils.MESSAGE.CONNECT + AUTHORIZATION_URI)
           } else {
             telegramBot.sendMessage(chatId, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           }
