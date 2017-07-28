@@ -22,7 +22,7 @@ var bodyParser = require('body-parser');
 var express = require('express');
 var builder = require('botbuilder');
 
-var bot = new _TelegramBot.TelegramBot();
+var telegramBot = new _TelegramBot.TelegramBot();
 var botOperations = new _botOperations.BotOperations();
 var app = express().use(bodyParser.json()).use('/callback', routes.authCallback);
 
@@ -42,23 +42,13 @@ app.get('/get-all', function (req, res) {
   });
 });
 
-var address = _utils.SKYPE_ADDRESS;
-address.conversation.id = 'hello';
-console.log(address);
-
 // Create chat bot
-var connector = new builder.ChatConnector({
-  appId: "5452dd9e-b3f2-440f-ad4c-3352296a254f",
-  appPassword: "jc4zckwu1uKd90zF6V1Gr4e"
-});
-var botSkype = new builder.UniversalBot(connector);
-
-var reply = new builder.Message().address(address).text("Automated");
-// botSkype.send(reply);
+var connector = new builder.ChatConnector(_utils.SKYPE_CREDENTIALS);
+var skypeBot = new builder.UniversalBot(connector);
 
 app.post('/skype-messaging', connector.listen());
 
-botSkype.dialog('/', function (session) {
+skypeBot.dialog('/', function (session) {
   var _session$message = session.message,
       address = _session$message.address,
       text = _session$message.text;
@@ -92,18 +82,25 @@ app.post('/assembla-webhook', function (req, res) {
             chatId = _integrations$i$dataV.chatId;
 
         console.log(chatId + ": ", _spaceWikiName);
-        bot.sendMessage(chatId, str);
+        if (/[a-z]/.test(chatId)) {
+          var address = _utils.SKYPE_ADDRESS;
+          address.conversation.id = chatId;
+          var reply = new builder.Message().address(address).text(str);
+          skypeBot.send(reply);
+        } else {
+          telegramBot.sendMessage(chatId, str);
+        }
       }
     }
   });
   res.json({ name: spaceWikiName });
 });
 
-bot.onText(/\/(.+)/, function (msg, match) {
+telegramBot.onText(/\/(.+)/, function (msg, match) {
   botOperations.handleCommands(match[1], false, msg);
 });
 
-bot.on('callback_query', function (callbackQuery) {
+telegramBot.on('callback_query', function (callbackQuery) {
   botOperations.handleCallbackQuery(callbackQuery);
 });
 

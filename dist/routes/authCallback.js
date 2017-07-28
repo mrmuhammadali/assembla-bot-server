@@ -20,56 +20,91 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+var builder = require('botbuilder');
 var router = require('express').Router();
 var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
+
+var telegramBot = new _TelegramBot.TelegramBot();
+var connector = new builder.ChatConnector(utils.SKYPE_CREDENTIALS);
+var skypeBot = new builder.UniversalBot(connector);
 
 exports.default = router.get('', function (req, res) {
   var _req$query = req.query,
       code = _req$query.code,
       state = _req$query.state;
 
-  var bot = new _TelegramBot.TelegramBot();
-  //we've got an auth code,
-  //so now we can get a bearer token
+  var chatId = state;
+  var address = utils.SKYPE_ADDRESS;
+  address.conversation.id = chatId;
+  var reply = new builder.Message().address(address);
+  var isSkype = false;
+
+  if (/[a-z]/.test(chatId)) {
+    isSkype = true;
+  }
+
   oauth2.authorizationCode.getToken({
     code: code,
     grant_type: 'authorization_code'
   }, function (error, result) {
     if (error) {
       console.log(utils.MESSAGE.ACCESS_TOKEN_ERROR, error);
-      bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED);
-      res.redirect(utils.TELEGRAM_BOT_URL);
+      if (isSkype) {
+        reply.text(utils.MESSAGE.AUTHORIZATION_FAILED);
+        skypeBot.send(reply);
+      } else {
+        telegramBot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_FAILED);
+      }
       return;
     }
     var token = oauth2.accessToken.create(result);
-    var chatId = state;
 
     console.log("Token: ", token);
-    console.log("ChatId: ", chatId);
+    console.log("Auth ChatId: ", chatId);
 
     _models2.default.Chat.create(_extends({ chatId: chatId }, token.token)).then(function (res) {
-      bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
+      if (isSkype) {
+        reply.text(utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
+        skypeBot.send(reply);
+      } else {
+        telegramBot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
+      }
     }).catch(function (err) {
       _models2.default.Chat.update(token.token, { where: { chatId: chatId } }).then(function (result) {
-        bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
+        if (isSkype) {
+          reply.text(utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
+          skypeBot.send(reply);
+        } else {
+          telegramBot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL);
+        }
       }).catch(function (err) {
-        bot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_FAILED);
+        if (isSkype) {
+          reply.text(utils.MESSAGE.AUTHORIZATION_FAILED);
+          skypeBot.send(reply);
+        } else {
+          telegramBot.sendMessage(chatId, utils.MESSAGE.AUTHORIZATION_FAILED);
+        }
       });
     });
+
+    if (isSkype) {
+      res.redirect(utils.SKYPE_BOT_URL);
+    } else {
+      res.redirect(utils.TELEGRAM_BOT_URL);
+    }
     // let newChat = new Chat({ _id: chatId, token })
     // newChat.save((err, res) => {
     //   if (err) {
     //     Chat.updateToken(chatId, token, (updateTokenError, updateTokenResponse) => {
     //       if (updateTokenError)
-    //         bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
+    //         telegramBot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_FAILED)
     //       else
-    //         bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
+    //         telegramBot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
     //     })
     //   }
     //   else
-    //     bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
+    //     telegramBot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
     // });
-    // bot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
-    res.redirect(utils.TELEGRAM_BOT_URL);
+    // telegramBot.sendMessage(state, utils.MESSAGE.AUTHORIZATION_SUCCESSFUL)
   });
 });

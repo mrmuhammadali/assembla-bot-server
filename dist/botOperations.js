@@ -112,6 +112,7 @@ exports.BotOperations = function BotOperations() {
   this.handleCommands = function (command, isSkype, session) {
     command = (0, _lodash.without)((0, _lodash.words)(command), 'Assembla', 'Bot')[0];
     var COMMANDS = utils.COMMANDS;
+    var chatId = isSkype ? (0, _lodash.get)(session, 'message.address.conversation.id', ' ') : (0, _lodash.get)(session, 'chat.id', ' ');
 
     switch (command) {
       case COMMANDS.START:
@@ -120,50 +121,38 @@ exports.BotOperations = function BotOperations() {
           if (isSkype) {
             session.send(utils.MESSAGE.INTRODUCE_BOT);
           } else {
-            var id = session.chat.id;
-
-            telegramBot.sendMessage(id, utils.MESSAGE.INTRODUCE_BOT);
+            telegramBot.sendMessage(chatId, utils.MESSAGE.INTRODUCE_BOT);
           }
           break;
         }
       case COMMANDS.CONNECT:
         {
-          var _id = (0, _lodash.get)(session, 'chat.id', ' ');
-          console.log("ID 1:", _id);
-          if (_id === ' ') {
-            _id = (0, _lodash.get)(session, 'message.address.conversation.id', ' ');
-            console.log("ID 2:", _id);
-          }
-          console.log("ID 3:", _id);
           var AUTHORIZATION_URI = oauth2.authorizationCode.authorizeURL({
             client_id: utils.ASSEMBLA_CREDENTIALS.client.id,
             response_type: 'code',
-            state: _id
+            state: chatId
           });
 
           if (isSkype) {
             session.send(utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           } else {
-            telegramBot.sendMessage(_id, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
+            telegramBot.sendMessage(chatId, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           }
           break;
         }
       case COMMANDS.NEW_INTEGRATION:
         {
-          //TODO chatId
-          _this.handleNewIntegration(session);
+          _this.handleNewIntegration(isSkype, chatId, session);
           break;
         }
       case COMMANDS.LIST_INTEGRATION:
         {
-          //TODO chatId, message_id
-          _this.handleListIntegrations(session);
+          _this.handleListIntegrations(isSkype, chatId, session);
           break;
         }
       case COMMANDS.DELETE_INTEGRATION:
         {
-          //TODO chatId, message_id
-          _this.handleDeleteIntegration(session);
+          _this.handleDeleteIntegration(isSkype, chatId, session);
           break;
         }
       default:
@@ -171,9 +160,7 @@ exports.BotOperations = function BotOperations() {
           if (isSkype) {
             session.send(utils.MESSAGE.COMMAND_NOT_FOUND);
           } else {
-            var _id2 = session.chat.id;
-
-            telegramBot.sendMessage(_id2, utils.MESSAGE.COMMAND_NOT_FOUND);
+            telegramBot.sendMessage(chatId, utils.MESSAGE.COMMAND_NOT_FOUND);
           }
         }
     }
@@ -253,7 +240,7 @@ exports.BotOperations = function BotOperations() {
     // })
   };
 
-  this.fetchSpaces = function (chatId, msg, access_token) {
+  this.fetchSpaces = function (isSkype, chatId, session, access_token) {
     var opts = {
       method: 'GET',
       uri: 'https://api.assembla.com/v1/spaces',
@@ -265,7 +252,11 @@ exports.BotOperations = function BotOperations() {
       responseBody = JSON.parse(responseBody);
       if (responseBody.error) {
         console.log(spaces);
-        telegramBot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
+        if (isSkype) {
+          session.send(utils.MESSAGE.INVALID_TOKEN);
+        } else {
+          telegramBot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
+        }
       } else {
         var _spaces = [];
         for (var i = 0; i < responseBody.length; i++) {
@@ -278,19 +269,23 @@ exports.BotOperations = function BotOperations() {
           _spaces.push([{ text: name, callback_data: callback_data }]);
         }
 
-        var _opts = {
-          reply_to_message_id: msg.message_id,
-          reply_markup: {
-            inline_keyboard: _spaces
-          }
-        };
-        telegramBot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, _opts);
+        if (isSkype) {
+          //TODO integration in skype
+          session.send("See Bot Documentation :p");
+        } else {
+          var _opts = {
+            reply_to_message_id: session.message_id,
+            reply_markup: {
+              inline_keyboard: _spaces
+            }
+          };
+          telegramBot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, _opts);
+        }
       }
     });
   };
 
-  this.refreshToken = function (chatId, msg, refresh_token) {
-    console.log("Expired!!!!!!");
+  this.refreshToken = function (isSkype, chatId, session, refresh_token) {
     var opts = {
       method: 'POST',
       uri: utils.REFRESH_TOKEN_URI + refresh_token
@@ -307,12 +302,12 @@ exports.BotOperations = function BotOperations() {
 
         console.log("New Token: ", _extends({}, token.token));
         _models2.default.Chat.update({ access_token: access_token, expires_at: expires_at }, { where: { chatId: chatId } });
-        _this.fetchSpaces(chatId, msg, access_token);
+        _this.fetchSpaces(isSkype, chatId, session, access_token);
       }
     });
   };
 
-  this.handleNewIntegration = function (chatId, msg) {
+  this.handleNewIntegration = function (isSkype, chatId, session) {
     _models2.default.Chat.findOne({ where: { chatId: chatId } }).then(function (chat) {
       console.log(chat.dataValues);
       var _chat$dataValues = chat.dataValues,
@@ -321,14 +316,14 @@ exports.BotOperations = function BotOperations() {
           expires_at = _chat$dataValues.expires_at;
 
       if (new Date().getTime() > expires_at.getTime()) {
-        _this.refreshToken(chatId, msg, refresh_token);
+        _this.refreshToken(isSkype, chatId, session, refresh_token);
       } else {
-        _this.fetchSpaces(chatId, msg, access_token);
+        _this.fetchSpaces(isSkype, chatId, session, access_token);
       }
     });
   };
 
-  this.handleListIntegrations = function (chatId, messageId) {
+  this.handleListIntegrations = function (isSkype, chatId, session) {
     _models2.default.Integration.findAll({ where: { chatId: chatId } }).then(function (integrations) {
       if (integrations !== null) {
         var integrationStr = '';
@@ -336,12 +331,17 @@ exports.BotOperations = function BotOperations() {
           console.log(integrations[i].dataValues.spaceName);
           integrationStr += i + 1 + '. ' + integrations[i].dataValues.spaceName + '\n';
         }
-        telegramBot.sendMessage(chatId, utils.MESSAGE.LIST_INTEGRATION + integrationStr, { reply_to_message_id: messageId });
+        if (isSkype) {
+          session.send(utils.MESSAGE.LIST_INTEGRATION + integrationStr);
+        } else {
+          var reply_to_message_id = (0, _lodash.get)(session, 'message_id', 0);
+          telegramBot.sendMessage(chatId, utils.MESSAGE.LIST_INTEGRATION + integrationStr, { reply_to_message_id: reply_to_message_id });
+        }
       }
     });
   };
 
-  this.handleDeleteIntegration = function (chatId, messageId) {
+  this.handleDeleteIntegration = function (isSkype, chatId, session) {
     _models2.default.Integration.findAll({ where: { chatId: chatId } }).then(function (integrations) {
       if (integrations !== null) {
         var _spaces2 = [];
@@ -355,13 +355,19 @@ exports.BotOperations = function BotOperations() {
           _spaces2.push([{ text: spaceName, callback_data: callback_data }]);
         }
 
-        var opts = {
-          reply_to_message_id: messageId,
-          reply_markup: {
-            inline_keyboard: _spaces2
-          }
-        };
-        telegramBot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_DELETE, opts);
+        if (isSkype) {
+          //TODO integration in skype
+          session.send("See Bot Documentation :p");
+        } else {
+          var reply_to_message_id = (0, _lodash.get)(session, 'message_id', 0);
+          var opts = {
+            reply_to_message_id: reply_to_message_id,
+            reply_markup: {
+              inline_keyboard: _spaces2
+            }
+          };
+          telegramBot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_DELETE, opts);
+        }
       }
     });
   };

@@ -3,7 +3,7 @@
 module.exports = function (sequelize, DataTypes) {
   var Chat = sequelize.define('chat', {
     chatId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true
     },
     access_token: DataTypes.STRING,
