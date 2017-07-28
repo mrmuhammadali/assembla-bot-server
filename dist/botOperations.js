@@ -29,6 +29,8 @@ var request = require('request');
 var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
 var telegramBot = new _TelegramBot.TelegramBot();
 
+var builder = require('botbuilder');
+
 var BotOperations =
 
 // longPolling = () => {
@@ -256,6 +258,7 @@ exports.BotOperations = function BotOperations() {
         }
       } else {
         var _spaces = [];
+        var skypeChoices = [];
         for (var i = 0; i < responseBody.length; i++) {
           var _responseBody$i = responseBody[i],
               wiki_name = _responseBody$i.wiki_name,
@@ -264,11 +267,49 @@ exports.BotOperations = function BotOperations() {
           var callback_data = JSON.stringify([wiki_name, name]);
           console.log("Wiki Name: ", wiki_name);
           _spaces.push([{ text: name, callback_data: callback_data }]);
+          if (i === 0) {
+            skypeChoices.push({ title: name, value: wiki_name, isSelected: true });
+          } else {
+            skypeChoices.push({ title: name, value: wiki_name });
+          }
         }
 
         if (isSkype) {
           //TODO integration in skype
-          session.send("See Bot Documentation :p");
+
+          var msg = new builder.Message(session).addAttachment({
+            contentType: "application/vnd.microsoft.card.adaptive",
+            content: {
+              type: "AdaptiveCard",
+              body: [{
+                "type": "TextBlock",
+                "text": "Assembla Spaces",
+                "size": "large",
+                "weight": "bolder"
+              }, {
+                "type": "TextBlock",
+                "text": utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE
+              }, {
+                "type": "Input.ChoiceSet",
+                "id": "snooze",
+                "style": "compact",
+                "choices": skypeChoices
+              }],
+              "actions": [{
+                "type": "Action.Http",
+                "method": "POST",
+                "url": "http://foo.com",
+                "title": "Integrate"
+              }, {
+                "type": "Action.Http",
+                "method": "POST",
+                "url": "http://foo.com",
+                "title": "Dismiss"
+              }]
+            }
+          });
+
+          session.send(msg);
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,

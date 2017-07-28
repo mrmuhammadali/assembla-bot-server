@@ -7,7 +7,7 @@ var ASSEMBLA_URL = exports.ASSEMBLA_URL = 'https://api.assembla.com';
 var BASE_URL = exports.BASE_URL = 'https://assembla-bot-server.herokuapp.com';
 var TELEGRAM_TOKEN = exports.TELEGRAM_TOKEN = '436072794:AAGgdTQgILeY6YjrJZsh72ZbYx2u4gTLAWU';
 // export const TELEGRAM_TOKEN = '407191495:AAFvFL2_KtFmo7QlcPzV7bJR-14YYBxTbXo'
-var TELEGRAM_BOT_URL = exports.TELEGRAM_BOT_URL = 'https://t.me/AssemblaBot/';
+var TELEGRAM_BOT_URL = exports.TELEGRAM_BOT_URL = 'https' + '://t.me/AssemblaBot/';
 var SKYPE_BOT_URL = exports.SKYPE_BOT_URL = 'https://join.skype.com/bot/5452dd9e-b3f2-440f-ad4c-3352296a254f';
 var CONVERSATION_ID = exports.CONVERSATION_ID = '19:978ea7f80ded467695613d0813126361@thread.skype';
 
