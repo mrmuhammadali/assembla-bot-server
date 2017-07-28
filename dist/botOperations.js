@@ -309,18 +309,11 @@ exports.BotOperations = function BotOperations() {
               }]
             }
           };
-          if (msg.attachments && msg.attachments.length > 0) {
-            var attachment = msg.attachments[0];
-            console.log("Attachment: ", attachment);
-            session.send({
-              attachments: [attachmentObj]
-            });
-          }
 
           console.log("isSkype: ", isSkype);
 
           session.send({
-            attachments: [attachmentObj]
+            text: "hello"
           });
         } else {
           var _opts = {
