@@ -332,7 +332,7 @@ exports.BotOperations = function BotOperations() {
               total: "$9,000"
             }
           };
-          builder.Prompts.choice(session, "Which region would you like sales for?", salesData, builder.ListStyle.button);
+          builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red", "Blue"], builder.ListStyle.button);
           // session.send(msg);
 
         } else {
