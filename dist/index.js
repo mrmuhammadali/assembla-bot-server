@@ -49,7 +49,7 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
       address = _session$message.address,
       text = _session$message.text;
 
-  console.log("Session: ", address);
+  console.log("Session: ", address); 
   botOperations.handleCommands(text, true, session);
 });
 
