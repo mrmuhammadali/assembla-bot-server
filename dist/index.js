@@ -56,14 +56,32 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
   botOperations.handleCommands(text, true, session);
 });
 
-skypeBot.dialog('/', function (session) {
-  var _session$message2 = session.message,
-      address = _session$message2.address,
-      text = _session$message2.text;
+// skypeBot.dialog('/', (session) => {
+//   const { address, text } = session.message
+//   console.log("Session/: ", address)
+//   botOperations.handleCommands(text, true, session)
+// });
 
-  console.log("Session/: ", address);
-  botOperations.handleCommands(text, true, session);
-});
+skypeBot.dialog('askSpace', [function (session) {
+  var salesData = {
+    "west": {
+      units: 200,
+      total: "$6,000"
+    },
+    "central": {
+      units: 100,
+      total: "$3,000"
+    },
+    "east": {
+      units: 300,
+      total: "$9,000"
+    }
+  };
+  builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
+}, function (session, results) {
+  console.log("Dialog Results: ", results);
+  session.send(results.response);
+}]);
 
 app.post('/assembla-webhook', function (req, res) {
   var _req$body = req.body,

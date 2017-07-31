@@ -328,29 +328,8 @@ exports.BotOperations = function BotOperations() {
 
           // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
-          var salesData = {
-            "west": {
-              units: 200,
-              total: "$6,000"
-            },
-            "central": {
-              units: 100,
-              total: "$3,000"
-            },
-            "east": {
-              units: 300,
-              total: "$9,000"
-            }
-          };
 
           session.beginDialog('askSpace');
-
-          skypeBot.dialog('askSpace', [function (session) {
-            builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
-          }, function (session, results) {
-            console.log("Dialog Results: ", results);
-            session.send(results.response);
-          }]);
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
