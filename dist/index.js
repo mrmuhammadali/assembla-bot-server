@@ -81,7 +81,7 @@ skypeBot.dialog('askSpace', [function (session) {
 }, function (session, results) {
   console.log("Dialog Results: ", results);
   console.log("Dialog Session: ", session);
-  session.send(results.response);
+  session.send("OK");
 }]);
 
 app.post('/assembla-webhook', function (req, res) {
