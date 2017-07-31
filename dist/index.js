@@ -1,5 +1,7 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _routes = require('./routes');
 
 var routes = _interopRequireWildcard(_routes);
@@ -62,8 +64,9 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
 //   botOperations.handleCommands(text, true, session)
 // });
 
-skypeBot.dialog('askSpace', [function (session) {
+skypeBot.dialog('askSpace', [function (session, args) {
   console.log("Dialog Data: ", session.dialogData);
+  console.log("Dialog Args: ", _extends({}, args));
   builder.Prompts.choice(session, _utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, session.dialogData.spaces);
 }, function (session, results) {
   console.log("Dialog Results: ", results);
