@@ -29,10 +29,6 @@ var request = require('request');
 var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
 var telegramBot = new _TelegramBot.TelegramBot();
 
-var builder = require('botbuilder');
-var connector = new builder.ChatConnector(utils.SKYPE_CREDENTIALS);
-var skypeBot = new builder.UniversalBot(connector);
-
 var BotOperations =
 
 // longPolling = () => {
