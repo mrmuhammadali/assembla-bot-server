@@ -56,7 +56,7 @@ skypeBot.dialog('/', [function (session) {
   console.log("Session: ", address);
   botOperations.handleCommands(text, true, session);
 }, function (session, results) {
-  console.log(results);
+  console.log("Dialog Results: ", results);
   session.send(results.response);
 }]);
 
