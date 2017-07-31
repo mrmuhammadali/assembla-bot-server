@@ -1,5 +1,9 @@
 'use strict';
 
+var _unescape = require('lodash/unescape');
+
+var _unescape2 = _interopRequireDefault(_unescape);
+
 var _routes = require('./routes');
 
 var routes = _interopRequireWildcard(_routes);
@@ -14,13 +18,14 @@ var _TelegramBot = require('./TelegramBot');
 
 var _botOperations = require('./botOperations');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var bodyParser = require('body-parser');
 var express = require('express');
 var builder = require('botbuilder');
+
 
 var telegramBot = new _TelegramBot.TelegramBot();
 var botOperations = new _botOperations.BotOperations();
@@ -103,7 +108,7 @@ app.post('/assembla-webhook', function (req, res) {
       branch = _req$body.branch,
       commitId = _req$body.commitId;
 
-  var str = object + ':\n' + author + ' ' + action + ' \'' + title + '\' in \'' + space + '\'';
+  var str = (0, _unescape2.default)(object + ':\n' + author + ' ' + action + ' \'' + title + '\' in \'' + space + '\'');
   console.log(str);
   _models2.default.Integration.findAll({ where: { spaceWikiName: spaceWikiName } }).then(function (integrations) {
     if (integrations !== null) {
