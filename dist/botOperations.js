@@ -270,7 +270,7 @@ exports.BotOperations = function BotOperations() {
           console.log("Wiki Name: ", wiki_name);
           telegramSpaces.push([{ text: name, callback_data: callback_data }]);
           // skypeSpaces.push({title: name, value: wiki_name})
-          skypeSpaces[(0, _lodash.camelCase)(name)] = { spaceWikiName: wiki_name, name: name };
+          skypeSpaces[name] = { spaceWikiName: wiki_name, name: name };
         }
 
         if (isSkype) {
