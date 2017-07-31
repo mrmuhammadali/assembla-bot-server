@@ -270,7 +270,7 @@ exports.BotOperations = function BotOperations() {
           console.log("Wiki Name: ", wiki_name);
           telegramSpaces.push([{ text: name, callback_data: callback_data }]);
           // skypeSpaces.push({title: name, value: wiki_name})
-          skypeSpaces[name] = { spaceWikiName: wiki_name };
+          skypeSpaces[(0, _lodash.camelCase)(name)] = { spaceWikiName: wiki_name, name: name };
         }
 
         if (isSkype) {
@@ -326,7 +326,7 @@ exports.BotOperations = function BotOperations() {
           // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
           console.log("skype spaces: ", skypeSpaces);
-          session.dialogData.spaces = JSON.stringify(skypeSpaces);
+          session.dialogData.spaces = skypeSpaces;
           session.beginDialog('askSpace');
         } else {
           var _opts = {
