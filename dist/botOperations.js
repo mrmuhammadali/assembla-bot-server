@@ -166,19 +166,34 @@ exports.BotOperations = function BotOperations() {
     }
   };
 
-  this.insertIntegration = function (chatId, message_id, spaceWikiName, spaceName) {
+  this.insertIntegration = function (isSkype, chatId, session, spaceWikiName, spaceName) {
 
-    var opts = { chat_id: chatId, message_id: message_id };
+    var opts = void 0;
+    if (!isSkype) {
+      opts = { chat_id: chatId, message_id: session.message_id };
+    }
 
     _models2.default.Integration.findOne({ where: { chatId: chatId, spaceWikiName: spaceWikiName } }).then(function (res) {
       if (res === null) {
         _models2.default.Integration.create({ spaceWikiName: spaceWikiName, spaceName: spaceName, chatId: chatId }).then(function (res) {
-          telegramBot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_INTEGRATED, opts);
+          if (isSkype) {
+            session.send('"' + spaceName + '"' + utils.MESSAGE.SPACE_INTEGRATED);
+          } else {
+            telegramBot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_INTEGRATED, opts);
+          }
         }).catch(function (err) {
-          telegramBot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
+          if (isSkype) {
+            session.send(utils.MESSAGE.DATABASE_ERROR);
+          } else {
+            telegramBot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
+          }
         });
       } else {
-        telegramBot.editMessageText(utils.MESSAGE.SPACE_ALREADY_EXIST, opts);
+        if (isSkype) {
+          session.send(utils.MESSAGE.SPACE_ALREADY_EXIST);
+        } else {
+          telegramBot.editMessageText(utils.MESSAGE.SPACE_ALREADY_EXIST, opts);
+        }
       }
     });
   };
@@ -198,13 +213,13 @@ exports.BotOperations = function BotOperations() {
   };
 
   this.handleCallbackQuery = function (callbackQuery) {
-    var msg = callbackQuery.message;
-    var chat_id = msg.chat.id + '';
+    var session = callbackQuery.message;
+    var chat_id = session.chat.id + '';
     var data = JSON.parse(callbackQuery.data);
     var spaceWikiName = data[0];
     var spaceName = data[1];
 
-    var text = msg.reply_to_message.text;
+    var text = session.reply_to_message.text;
 
     var command = (0, _lodash.without)((0, _lodash.words)(text), 'Assembla', 'Bot')[0];
 
@@ -213,12 +228,12 @@ exports.BotOperations = function BotOperations() {
     switch (command) {
       case utils.COMMANDS.NEW_INTEGRATION:
         {
-          _this.insertIntegration(chat_id, msg.message_id, spaceWikiName, spaceName);
+          _this.insertIntegration(false, chat_id, session, spaceWikiName, spaceName);
           break;
         }
       case utils.COMMANDS.DELETE_INTEGRATION:
         {
-          _this.deleteIntegration(chat_id, msg.message_id, spaceWikiName, spaceName);
+          _this.deleteIntegration(chat_id, session.message_id, spaceWikiName, spaceName);
           break;
         }
     }

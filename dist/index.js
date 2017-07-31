@@ -56,25 +56,20 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
   botOperations.handleCommands(text, true, session);
 });
 
-// skypeBot.dialog('/', (session) => {
-//   const { address, text } = session.message
-//   console.log("Session/: ", address)
-//   botOperations.handleCommands(text, true, session)
-// });
-
 skypeBot.dialog('askSpace', [function (session, args) {
   session.dialogData.spaces = args.spaces;
   builder.Prompts.choice(session, _utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, args.spaces);
 }, function (session, results) {
-  console.log("Dialog Results: ", results);
   var _results$response = results.response,
       index = _results$response.index,
       entity = _results$response.entity;
-  var spaces = session.dialogData.spaces;
+  var _session$dialogData$s = session.dialogData.spaces[entity],
+      spaceWikiName = _session$dialogData$s.spaceWikiName,
+      name = _session$dialogData$s.name;
   var chatId = session.message.address.conversation.id;
 
 
-  session.send(spaces[entity].spaceWikiName);
+  botOperations.insertIntegration(true, chatId, session, spaceWikiName, name);
 }]);
 
 app.post('/assembla-webhook', function (req, res) {
