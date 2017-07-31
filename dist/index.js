@@ -48,17 +48,14 @@ var skypeBot = new builder.UniversalBot(connector);
 
 app.post('/skype-messaging', connector.listen());
 
-skypeBot.dialog('/', [function (session) {
+skypeBot.dialog('/', function (session) {
   var _session$message = session.message,
       address = _session$message.address,
       text = _session$message.text;
 
   console.log("Session: ", address);
   botOperations.handleCommands(text, true, session);
-}, function (session, results) {
-  console.log("Dialog Results: ", results);
-  session.send(results.response);
-}]);
+});
 
 app.post('/assembla-webhook', function (req, res) {
   var _req$body = req.body,

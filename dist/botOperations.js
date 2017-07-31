@@ -30,6 +30,8 @@ var oauth2 = require('simple-oauth2').create(utils.ASSEMBLA_CREDENTIALS);
 var telegramBot = new _TelegramBot.TelegramBot();
 
 var builder = require('botbuilder');
+var connector = new builder.ChatConnector(SKYPE_CREDENTIALS);
+var skypeBot = new builder.UniversalBot(connector);
 
 var BotOperations =
 
@@ -340,7 +342,15 @@ exports.BotOperations = function BotOperations() {
               total: "$9,000"
             }
           };
-          builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
+
+          session.beginDialog('askSpace');
+
+          skypeBot.dialog('askSpace', [function (session) {
+            builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
+          }, function (session, results) {
+            console.log("Dialog Results: ", results);
+            session.send(results.response);
+          }]);
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
