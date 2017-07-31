@@ -275,50 +275,72 @@ exports.BotOperations = function BotOperations() {
         }
 
         if (isSkype) {
-          //TODO integration in skype
+          //TODO newintegration in skype
 
-          var attachmentObj = {
-            contentType: "application/vnd.microsoft.card.adaptive",
-            content: {
-              type: "AdaptiveCard",
-              body: [{
-                "type": "TextBlock",
-                "text": "Assembla Spaces",
-                "size": "large",
-                "weight": "bolder"
-              }, {
-                "type": "TextBlock",
-                "text": utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE
-              }, {
-                "type": "Input.ChoiceSet",
-                "id": "snooze",
-                "style": "compact",
-                "choices": skypeChoices
-              }],
-              "actions": [{
-                "type": "Action.Http",
-                "method": "POST",
-                "url": "http://foo.com",
-                "title": "Integrate"
-              }, {
-                "type": "Action.Http",
-                "method": "POST",
-                "url": "http://foo.com",
-                "title": "Dismiss"
-              }]
-            }
-          };
+          // const attachmentObj = {
+          //   contentType: "application/vnd.microsoft.card.adaptive",
+          //   content: {
+          //     type: "AdaptiveCard",
+          //     body: [
+          //       {
+          //         "type": "TextBlock",
+          //         "text": "Assembla Spaces",
+          //         "size": "large",
+          //         "weight": "bolder"
+          //       },
+          //       {
+          //         "type": "TextBlock",
+          //         "text": utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE
+          //       },
+          //       {
+          //         "type": "Input.ChoiceSet",
+          //         "id": "snooze",
+          //         "style":"compact",
+          //         "choices": skypeChoices
+          //       }
+          //     ],
+          //     "actions": [
+          //       {
+          //         "type": "Action.Http",
+          //         "method": "POST",
+          //         "url": "http://foo.com",
+          //         "title": "Integrate"
+          //       },
+          //       {
+          //         "type": "Action.Http",
+          //         "method": "POST",
+          //         "url": "http://foo.com",
+          //         "title": "Dismiss"
+          //       }
+          //     ]
+          //   }
+          // }
+          // session.send({
+          //   type: "message",
+          //   attachments: [
+          //     attachmentObj
+          //   ]
+          // });
 
           console.log("isSkype: ", isSkype);
 
-          session.send({
-            type: "message",
-            attachments: [attachmentObj]
-          });
-
           // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
-
+          var salesData = {
+            "west": {
+              units: 200,
+              total: "$6,000"
+            },
+            "central": {
+              units: 100,
+              total: "$3,000"
+            },
+            "east": {
+              units: 300,
+              total: "$9,000"
+            }
+          };
+          builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
