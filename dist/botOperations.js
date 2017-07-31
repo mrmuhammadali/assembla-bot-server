@@ -121,7 +121,7 @@ exports.BotOperations = function BotOperations() {
       case COMMANDS.HELP:
         {
           if (isSkype) {
-            session.send(utils.MESSAGE.INTRODUCE_BOT);
+            session.endDialog(utils.MESSAGE.INTRODUCE_BOT);
           } else {
             telegramBot.sendMessage(chatId, utils.MESSAGE.INTRODUCE_BOT);
           }
@@ -136,7 +136,7 @@ exports.BotOperations = function BotOperations() {
           });
 
           if (isSkype) {
-            session.send(utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
+            session.endDialog(utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           } else {
             telegramBot.sendMessage(chatId, utils.MESSAGE.CONNECT + AUTHORIZATION_URI);
           }
