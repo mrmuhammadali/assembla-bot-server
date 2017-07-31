@@ -168,7 +168,7 @@ exports.BotOperations = function BotOperations() {
 
   this.insertIntegration = function (isSkype, chatId, session, spaceWikiName, spaceName) {
 
-    var opts = void 0;
+    var opts = {};
     if (!isSkype) {
       opts = { chat_id: chatId, message_id: session.message_id };
     }
@@ -198,17 +198,32 @@ exports.BotOperations = function BotOperations() {
     });
   };
 
-  this.deleteIntegration = function (chatId, message_id, integrationId, spaceName) {
-    var opts = { chat_id: chatId, message_id: message_id };
+  this.deleteIntegration = function (isSkype, chatId, session, integrationId, spaceName) {
+    var opts = {};
+    if (!isSkype) {
+      opts = { chat_id: chatId, message_id: session.message_id };
+    }
 
     _models2.default.Integration.destroy({ where: { id: integrationId } }).then(function (res) {
       if (res >= 1) {
-        telegramBot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_DELETED, opts);
+        if (isSkype) {
+          session.send('"' + spaceName + '"' + utils.MESSAGE.SPACE_DELETED);
+        } else {
+          telegramBot.editMessageText('"' + spaceName + '"' + utils.MESSAGE.SPACE_DELETED, opts);
+        }
+      } else {
+        if (isSkype) {
+          session.send(utils.MESSAGE.DATABASE_ERROR);
+        } else {
+          telegramBot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
+        }
+      }
+    }).catch(function (err) {
+      if (isSkype) {
+        session.send(utils.MESSAGE.DATABASE_ERROR);
       } else {
         telegramBot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
       }
-    }).catch(function (err) {
-      telegramBot.editMessageText(utils.MESSAGE.DATABASE_ERROR, opts);
     });
   };
 
@@ -233,7 +248,8 @@ exports.BotOperations = function BotOperations() {
         }
       case utils.COMMANDS.DELETE_INTEGRATION:
         {
-          _this.deleteIntegration(chat_id, session.message_id, spaceWikiName, spaceName);
+          var integrationId = spaceWikiName;
+          _this.deleteIntegration(false, chat_id, session, integrationId, spaceName);
           break;
         }
     }
@@ -281,7 +297,7 @@ exports.BotOperations = function BotOperations() {
           console.log("Wiki Name: ", wiki_name);
           telegramSpaces.push([{ text: name, callback_data: callback_data }]);
           // skypeSpaces.push({title: name, value: wiki_name})
-          skypeSpaces[name] = { spaceWikiName: wiki_name, name: name };
+          skypeSpaces[name] = { spaceWikiName: wiki_name, spaceName: name };
         }
 
         if (isSkype) {
@@ -335,7 +351,7 @@ exports.BotOperations = function BotOperations() {
           // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
 
-          session.beginDialog('askSpace', { spaces: skypeSpaces });
+          session.beginDialog('askSpaceIntegrate', { spaces: skypeSpaces });
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
@@ -409,26 +425,28 @@ exports.BotOperations = function BotOperations() {
   this.handleDeleteIntegration = function (isSkype, chatId, session) {
     _models2.default.Integration.findAll({ where: { chatId: chatId } }).then(function (integrations) {
       if (integrations !== null) {
-        var _spaces = [];
+        var telegramSpaces = [];
+        var skypeSpaces = {};
         for (var i = 0; i < integrations.length; i++) {
           var _integrations$i$dataV = integrations[i].dataValues,
-              id = _integrations$i$dataV.id,
+              integrationId = _integrations$i$dataV.id,
               spaceName = _integrations$i$dataV.spaceName;
 
-          var callback_data = JSON.stringify([id, spaceName]);
+          var callback_data = JSON.stringify([integrationId, spaceName]);
 
-          _spaces.push([{ text: spaceName, callback_data: callback_data }]);
+          telegramSpaces.push([{ text: spaceName, callback_data: callback_data }]);
+          skypeSpaces[spaceName] = { integrationId: integrationId, spaceName: spaceName };
         }
 
         if (isSkype) {
           //TODO integration in skype
-          session.send("See Bot Documentation :p");
+          session.beginDialog('askSpaceDelete', { spaces: skypeSpaces });
         } else {
           var reply_to_message_id = (0, _lodash.get)(session, 'message_id', 0);
           var opts = {
             reply_to_message_id: reply_to_message_id,
             reply_markup: {
-              inline_keyboard: _spaces
+              inline_keyboard: telegramSpaces
             }
           };
           telegramBot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_DELETE, opts);

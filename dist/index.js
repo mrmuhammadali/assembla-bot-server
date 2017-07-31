@@ -56,7 +56,7 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
   botOperations.handleCommands(text, true, session);
 });
 
-skypeBot.dialog('askSpace', [function (session, args) {
+skypeBot.dialog('askSpaceIntegrate', [function (session, args) {
   session.dialogData.spaces = args.spaces;
   builder.Prompts.choice(session, _utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, args.spaces);
 }, function (session, results) {
@@ -65,11 +65,27 @@ skypeBot.dialog('askSpace', [function (session, args) {
       entity = _results$response.entity;
   var _session$dialogData$s = session.dialogData.spaces[entity],
       spaceWikiName = _session$dialogData$s.spaceWikiName,
-      name = _session$dialogData$s.name;
+      spaceName = _session$dialogData$s.spaceName;
   var chatId = session.message.address.conversation.id;
 
 
-  botOperations.insertIntegration(true, chatId, session, spaceWikiName, name);
+  botOperations.insertIntegration(true, chatId, session, spaceWikiName, spaceName);
+}]);
+
+skypeBot.dialog('askSpaceDelete', [function (session, args) {
+  session.dialogData.spaces = args.spaces;
+  builder.Prompts.choice(session, _utils.MESSAGE.CHOOSE_SAPCE_DELETE, args.spaces);
+}, function (session, results) {
+  var _results$response2 = results.response,
+      index = _results$response2.index,
+      entity = _results$response2.entity;
+  var _session$dialogData$s2 = session.dialogData.spaces[entity],
+      integrationId = _session$dialogData$s2.integrationId,
+      spaceName = _session$dialogData$s2.spaceName;
+  var chatId = session.message.address.conversation.id;
+
+
+  botOperations.deleteIntegration(true, chatId, session, integrationId, spaceName);
 }]);
 
 app.post('/assembla-webhook', function (req, res) {
