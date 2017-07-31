@@ -321,12 +321,9 @@ exports.BotOperations = function BotOperations() {
           //   ]
           // });
 
-          console.log("isSkype: ", isSkype);
-
           // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
-          console.log("skype spaces: ", skypeSpaces);
-          // session.dialogData.spaces = skypeSpaces
+
           session.beginDialog('askSpace', { spaces: skypeSpaces });
         } else {
           var _opts = {

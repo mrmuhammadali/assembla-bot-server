@@ -1,7 +1,5 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _routes = require('./routes');
 
 var routes = _interopRequireWildcard(_routes);
@@ -65,14 +63,18 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
 // });
 
 skypeBot.dialog('askSpace', [function (session, args) {
-  console.log("Dialog Args: ", _extends({}, args));
   session.dialogData.spaces = args.spaces;
   builder.Prompts.choice(session, _utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, args.spaces);
 }, function (session, results) {
   console.log("Dialog Results: ", results);
-  console.log("Dialog Session: ", session.message.address);
-  console.log("Dialog Data: ", _extends({}, session.dialogData));
-  session.send("OK");
+  var _results$response = results.response,
+      index = _results$response.index,
+      entity = _results$response.entity;
+  var spaces = session.dialogData.spaces;
+  var chatId = session.message.address.conversation.id;
+
+
+  session.send(spaces[entity].spaceWikiName);
 }]);
 
 app.post('/assembla-webhook', function (req, res) {
