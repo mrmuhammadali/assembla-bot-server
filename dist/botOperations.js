@@ -325,7 +325,7 @@ exports.BotOperations = function BotOperations() {
 
           // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
-
+          console.log("skype spaces: ", skypeSpaces);
           session.dialogData.spaces = skypeSpaces;
           session.beginDialog('askSpace');
         } else {
