@@ -64,7 +64,7 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
 
 skypeBot.dialog('askSpace', [function (session) {
   console.log("Dialog Data: ", session.dialogData);
-  builder.Prompts.choice(session, _utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, session.dialogData.spaces);
+  builder.Prompts.choice(session, _utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, JSON.parse(session.dialogData.spaces));
 }, function (session, results) {
   console.log("Dialog Results: ", results);
   console.log("Dialog Session: ", session.message.address);
