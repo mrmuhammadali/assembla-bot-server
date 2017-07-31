@@ -311,14 +311,12 @@ exports.BotOperations = function BotOperations() {
 
           console.log("isSkype: ", isSkype);
 
-          // session.send({
-          //   type: "message",
-          //   attachments: [
-          //     attachmentObj
-          //   ]
-          // });
+          session.send({
+            type: "message",
+            attachments: [attachmentObj]
+          });
 
-          builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], { listStyle: builder.ListStyle["button"] });
+          // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
 
         } else {
