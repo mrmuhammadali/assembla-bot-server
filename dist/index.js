@@ -80,7 +80,7 @@ skypeBot.dialog('askSpace', [function (session) {
   builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
 }, function (session, results) {
   console.log("Dialog Results: ", results);
-  console.log("Dialog Session: ", session);
+  console.log("Dialog Session: ", session.message.address);
   session.send("OK");
 }]);
 
