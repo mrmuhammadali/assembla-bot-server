@@ -59,6 +59,7 @@ skypeBot.dialog('/', function (session) {
 
 app.post('/assembla-webhook', function (req, res) {
   var _req$body = req.body,
+      spaceWikiName = _req$body.spaceWikiName,
       author = _req$body.author,
       object = _req$body.object,
       space = _req$body.space,
@@ -71,9 +72,8 @@ app.post('/assembla-webhook', function (req, res) {
       branch = _req$body.branch,
       commitId = _req$body.commitId;
 
-  var spaceWikiName = link.substr(link.indexOf('code/') + 5);
-  spaceWikiName = spaceWikiName.substr(0, spaceWikiName.indexOf('/'));
   var str = object + ':\n' + author + ' ' + action + ' \'' + title + '\' in \'' + space + '\'';
+  console.log(str);
   _models2.default.Integration.findAll({ where: { spaceWikiName: spaceWikiName } }).then(function (integrations) {
     if (integrations !== null) {
       for (var i = 0; i < integrations.length; i++) {
