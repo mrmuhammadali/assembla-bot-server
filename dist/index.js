@@ -44,22 +44,26 @@ app.get('/get-all', function (req, res) {
 
 // Create chat bot
 var connector = new builder.ChatConnector(_utils.SKYPE_CREDENTIALS);
+
+app.post('/skype-messaging', connector.listen());
+
 var skypeBot = new builder.UniversalBot(connector, function (session) {
   var _session$message = session.message,
       address = _session$message.address,
       text = _session$message.text;
 
-  console.log("Session: ", address); 
+  console.log("Session: ", address);
   botOperations.handleCommands(text, true, session);
 });
 
-app.post('/skype-messaging', connector.listen());
+skypeBot.dialog('/', function (session) {
+  var _session$message2 = session.message,
+      address = _session$message2.address,
+      text = _session$message2.text;
 
-// skypeBot.dialog('/', (session) => {
-//   const { address, text } = session.message
-//   console.log("Session: ", address)
-//   botOperations.handleCommands(text, true, session)
-// });
+  console.log("Session/: ", address);
+  botOperations.handleCommands(text, true, session);
+});
 
 app.post('/assembla-webhook', function (req, res) {
   var _req$body = req.body,
