@@ -63,24 +63,12 @@ var skypeBot = new builder.UniversalBot(connector, function (session) {
 // });
 
 skypeBot.dialog('askSpace', [function (session) {
-  var salesData = {
-    "west": {
-      units: 200,
-      total: "$6,000"
-    },
-    "central": {
-      units: 100,
-      total: "$3,000"
-    },
-    "east": {
-      units: 300,
-      total: "$9,000"
-    }
-  };
-  builder.Prompts.choice(session, "Which region would you like sales for?", salesData);
+  console.log("Dialog Data: ", session.dialogData);
+  builder.Prompts.choice(session, "Which region would you like sales for?", session.dialogData.spaces);
 }, function (session, results) {
   console.log("Dialog Results: ", results);
   console.log("Dialog Session: ", session.message.address);
+  console.log("Dialog Data: ", session.dialogData);
   session.send("OK");
 }]);
 

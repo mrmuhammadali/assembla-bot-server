@@ -259,8 +259,8 @@ exports.BotOperations = function BotOperations() {
           telegramBot.sendMessage(chatId, utils.MESSAGE.INVALID_TOKEN);
         }
       } else {
-        var _spaces = [];
-        var skypeChoices = [];
+        var telegramSpaces = [];
+        var skypeSpaces = {};
         for (var i = 0; i < responseBody.length; i++) {
           var _responseBody$i = responseBody[i],
               wiki_name = _responseBody$i.wiki_name,
@@ -268,12 +268,9 @@ exports.BotOperations = function BotOperations() {
 
           var callback_data = JSON.stringify([wiki_name, name]);
           console.log("Wiki Name: ", wiki_name);
-          _spaces.push([{ text: name, callback_data: callback_data }]);
-          if (i === 0) {
-            skypeChoices.push({ title: name, value: wiki_name, isSelected: true });
-          } else {
-            skypeChoices.push({ title: name, value: wiki_name });
-          }
+          telegramSpaces.push([{ text: name, callback_data: callback_data }]);
+          // skypeSpaces.push({title: name, value: wiki_name})
+          skypeSpaces[name] = { spaceWikiName: wiki_name };
         }
 
         if (isSkype) {
@@ -329,12 +326,13 @@ exports.BotOperations = function BotOperations() {
           // builder.Prompts.choice(session, "Which region would you like sales for?", ["Green", "Red"], {listStyle: builder.ListStyle["button"]});
           // session.send(msg);
 
+          session.dialogData.spaces = skypeSpaces;
           session.beginDialog('askSpace');
         } else {
           var _opts = {
             reply_to_message_id: session.message_id,
             reply_markup: {
-              inline_keyboard: _spaces
+              inline_keyboard: telegramSpaces
             }
           };
           telegramBot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_INTEGRATE, _opts);
@@ -403,7 +401,7 @@ exports.BotOperations = function BotOperations() {
   this.handleDeleteIntegration = function (isSkype, chatId, session) {
     _models2.default.Integration.findAll({ where: { chatId: chatId } }).then(function (integrations) {
       if (integrations !== null) {
-        var _spaces2 = [];
+        var _spaces = [];
         for (var i = 0; i < integrations.length; i++) {
           var _integrations$i$dataV = integrations[i].dataValues,
               id = _integrations$i$dataV.id,
@@ -411,7 +409,7 @@ exports.BotOperations = function BotOperations() {
 
           var callback_data = JSON.stringify([id, spaceName]);
 
-          _spaces2.push([{ text: spaceName, callback_data: callback_data }]);
+          _spaces.push([{ text: spaceName, callback_data: callback_data }]);
         }
 
         if (isSkype) {
@@ -422,7 +420,7 @@ exports.BotOperations = function BotOperations() {
           var opts = {
             reply_to_message_id: reply_to_message_id,
             reply_markup: {
-              inline_keyboard: _spaces2
+              inline_keyboard: _spaces
             }
           };
           telegramBot.sendMessage(chatId, utils.MESSAGE.CHOOSE_SAPCE_DELETE, opts);
