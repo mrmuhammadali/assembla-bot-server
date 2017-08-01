@@ -109,7 +109,7 @@ app.post('/assembla-webhook', function (req, res) {
       commitId = _req$body.commitId;
 
   var str = (0, _unescape2.default)(object + ':\n' + author + ' ' + action + ' \'' + title + '\' in \'' + space + '\'');
-  console.log("Webhook Response: ", req.body);
+  console.log("Webhook Response Body: ", body);
   _models2.default.Integration.findAll({ where: { spaceWikiName: spaceWikiName } }).then(function (integrations) {
     if (integrations !== null) {
       for (var i = 0; i < integrations.length; i++) {
