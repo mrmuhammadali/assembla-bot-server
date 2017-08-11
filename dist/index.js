@@ -4,6 +4,10 @@ var _unescape = require('lodash/unescape');
 
 var _unescape2 = _interopRequireDefault(_unescape);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _routes = require('./routes');
 
 var routes = _interopRequireWildcard(_routes);
@@ -109,6 +113,9 @@ app.post('/assembla-webhook', function (req, res) {
       commitId = _req$body.commitId;
 
   var str = (0, _unescape2.default)(object + ':\n' + author + ' ' + action + ' \'' + title + '\' in \'' + space + '\'');
+  if (body.lastIndexOf('------------------------------+----------------------------------------------') > 0) {
+    str += body.substr(body.lastIndexOf('------------------------------+----------------------------------------------') + 77);
+  }
   console.log("Webhook Response Body: ", body);
   _models2.default.Integration.findAll({ where: { spaceWikiName: spaceWikiName } }).then(function (integrations) {
     if (integrations !== null) {
