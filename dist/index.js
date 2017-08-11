@@ -114,7 +114,7 @@ app.post('/assembla-webhook', function (req, res) {
 
   var str = (0, _unescape2.default)(object + ':\n' + author + ' ' + action + ' \'' + title + '\' in \'' + space + '\'');
   if (body.lastIndexOf('------------------------------+----------------------------------------------') > 0) {
-    str += body.substr(body.lastIndexOf('------------------------------+----------------------------------------------') + 77);
+    str += '\n\n' + body.substr(body.lastIndexOf('------------------------------+----------------------------------------------') + 77);
   }
   console.log("Webhook Response Body: ", body);
   _models2.default.Integration.findAll({ where: { spaceWikiName: spaceWikiName } }).then(function (integrations) {
